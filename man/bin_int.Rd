@@ -21,10 +21,6 @@ This function takes a numeric value 'x', which represents a coordinate, and
 bins it to the nearest grid point based on the specified resolution 'res' and
 an optional origin point 'origin'. The result is then converted to an integer.
 }
-\examples{
-bin_int(0.1, 1) # returns 0
-bin_int(0.9, 1) # returns 1
-bin_int(0.1, 1, origin = 0.5) # returns 0
-bin_int(0.1, 1, origin = 0.1) # returns 0
-bin_int(0.4, 0.5) # returns 1
+\author{
+Benjamin Brede
 }

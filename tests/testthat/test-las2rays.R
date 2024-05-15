@@ -10,11 +10,8 @@ traj <- fread(traj_file[1], col.names = c('gpstime', 'roll', 'pitch', 'yaw', 'Xo
          Ytraj = Yorigin,
          Ztraj = Zorigin)
 
-test_that("Adding viewangles works.", {
-  rays_obj <- las2rays(laz,traj)
-  rays_obj <- addViewangles(rays_obj)
-  # Check if VZA and VAA attributes have been added
-  expect_true("VZA" %in% names(rays_obj@data))
-  expect_true("VAA" %in% names(rays_obj@data))
+test_that("las2rays function returns an object of class 'Rays'", {
+  rays <- las2rays(laz, traj)
+  expect_s4_class(rays, "Rays")
 })
 

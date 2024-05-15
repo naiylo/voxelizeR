@@ -6,6 +6,11 @@
 \usage{
 \S4method{initialize}{Rays}(.Object, ...)
 }
+\arguments{
+\item{.Object}{Object}
+
+\item{...}{Additional arguments passed to other methods or functions.}
+}
 \value{
 a Ray object
 }

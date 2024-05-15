@@ -10,8 +10,6 @@ split_equal(x, n)
 \item{x}{vector to split}
 
 \item{n}{number of groups to split x into}
-
-\item{l}{length of groups}
 }
 \value{
 list with parts of the vector
@@ -22,12 +20,6 @@ groups of length 'l' If 'n' is 1, it returns the original vector. Otherwise, it 
 the 'cut' function to create a factor that splits the sequence along the vector into
 'n' groups, which is then used by the 'split' function to divide the vector accordingly.
 }
-\examples{
-split_equal(1:10, 2) # returns list(1:5, 6:10)
-split_equal(1:10, 5) # returns list(1:2, 3:4, 5:6, 7:8, 9:10)
-split_equal(1:10, 1) # returns list(1:10)
-
-split_equal_2(1:10, l = 2) # returns list(1:5, 6:10)
-split_equal_2(1:10, l = 3) # returns list(1:3, 4:6, 7:9, 10)
-split_equal_2(1:10, l = 5) # returns list(1:2, 3:4, 5:6, 7:8, 9:10)
+\author{
+Benjamin Brede
 }

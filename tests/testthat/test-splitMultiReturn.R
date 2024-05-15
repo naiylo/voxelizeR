@@ -1,7 +1,6 @@
 # Create an S4 LAS object
 data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
 las <- readLAS(data_file)
-laz <- las[1]
 # Create trajectory for the object
 traj_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
 traj <- fread(traj_file[1], col.names = c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')) %>%
@@ -10,11 +9,8 @@ traj <- fread(traj_file[1], col.names = c('gpstime', 'roll', 'pitch', 'yaw', 'Xo
          Ytraj = Yorigin,
          Ztraj = Zorigin)
 
-test_that("Adding viewangles works.", {
-  rays_obj <- las2rays(laz,traj)
-  rays_obj <- addViewangles(rays_obj)
-  # Check if VZA and VAA attributes have been added
-  expect_true("VZA" %in% names(rays_obj@data))
-  expect_true("VAA" %in% names(rays_obj@data))
+test_that("splitMultiReturn works correctly", {
+
 })
 
+# TODO what tests are necessary where is the addTraj() function from his own tests

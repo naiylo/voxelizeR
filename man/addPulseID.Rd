@@ -8,12 +8,12 @@ addPulseID(las, ...)
 }
 \arguments{
 \item{las}{An object of class LAS with added trajectory (\link{addTraj})}
+
+\item{...}{Additional arguments passed to other methods or functions.}
 }
 \description{
-Add Pulse ID to LAS Object
+This function adds a pulse ID attribute to an LAS object that has a trajectory.
 }
 \author{
 Benjamin Brede
-
-This function adds a pulse ID attribute to an LAS object that has a trajectory.
 }

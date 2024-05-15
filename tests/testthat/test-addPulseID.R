@@ -1,5 +1,5 @@
 # Read in our example data
-data_file <- system.file("data","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
 # Create an S4 LAS object
 data <- readLAS(data_file)
 # Reduce size due to performance

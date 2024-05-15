@@ -6,10 +6,7 @@
 \title{An S4 class to represent LiDAR rays}
 \description{
 Class Rays is the representation of a las/laz file according to the
-\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}.
-}
-\details{
-\code{Rays} inherit from \code{LAS} with additional attributes:
+\href{https://www.asprs.org/wp-content/uploads/2019/07/LAS_1_4_r15.pdf}{LAS file format specifications}. \code{Rays} inherit from \code{LAS} with additional attributes:
 \itemize{
 \item{\code{Xtraj}, \code{Ytraj}, \code{Ztraj} (numeric): coordinates of the point on the trajectory from where laser pulse was fired}
 \item{\code{Xorigin}, \code{Yorigin}, \code{Zorigin} (numeric): coordinates of origin of this segment, e.g. when multi-return pulses are split, or pulses are clipped}

@@ -6,6 +6,9 @@
 \usage{
 \method{rbind}{Rays}(...)
 }
+\arguments{
+\item{...}{Additional arguments passed to other methods or functions.}
+}
 \description{
 Combine Rays objects
 }
