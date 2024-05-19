@@ -12,3 +12,6 @@
 \description{
 Show object Ray
 }
+\note{
+copied from lidR/print.R
+}

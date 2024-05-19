@@ -11,7 +11,7 @@
 #' into a Rays object. The conversion requires a trajectory dataset that contains
 #' the flight path information of the LiDAR sensor.
 #'
-#' @seealso \link{Rays}
+#' @seealso \code{\link{Rays-class}}
 #'
 #' @name las2rays
 #' @aliases las2rays,LAS,data.table-method

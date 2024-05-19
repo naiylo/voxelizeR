@@ -32,7 +32,7 @@ into a Rays object. The conversion requires a trajectory dataset that contains
 the flight path information of the LiDAR sensor.
 }
 \seealso{
-\link{Rays}
+\code{\link{Rays-class}}
 }
 \author{
 Benjamin Brede

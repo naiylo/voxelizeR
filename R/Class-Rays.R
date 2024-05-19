@@ -25,7 +25,7 @@ setClass(
 )
 
 #  TODO maybe the changeup makes a problem
-#' Initialize Object Ray
+#' Initialize object ray
 #'
 #' @author Benjamin Brede
 #'
@@ -65,7 +65,9 @@ setMethod("initialize", "Rays", function(.Object, ...) {
 
 #' Check if Object inherits from LAS-class
 #'
-#' @name Check   <- TODO check where to set
+#' @param .Object Object to check
+#'
+#' @name Check <- TODO
 
 setValidity("Rays", function(object) {
 
@@ -90,11 +92,11 @@ setValidity("Rays", function(object) {
 #'
 #' @param object Ray to show
 #'
+#' @note copied from lidR/print.R
+#'
 #' @export
 
 setMethod("show", "Rays", function(object) {
-
-  ## copied from lidR/print.R
 
   size      <- format(las_size(object), units = "auto")
   area      <- as.numeric(st_area(object))
