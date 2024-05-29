@@ -2,7 +2,7 @@
 #'
 #' @import lidR
 #' @import data.table
-#' @importFrom utils globalVariables
+#' @importFrom methods new
 #'
 #' @author Benjamin Brede
 #'
@@ -61,7 +61,7 @@ setMethod("las2rays",
               # all hits are original hits, not clipped pulses yet
               add_lasattribute(name = "XYZisHit", desc = "XYZisHit", x = 1)
 
-            rays <- new("Rays")
+            rays <- methods::new("Rays")
 
             rays@header <- las_with_traj@header
             rays@header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
@@ -71,24 +71,6 @@ setMethod("las2rays",
             rays@crs         <- las_with_traj@crs
             rays@data        <- las_with_traj@data
             rays@index       <- las_with_traj@index
-
-            # header = LASheader(lastraj)
-            #
-            # header$`X scale factor` <- las@header$`X scale factor`
-            # header$`Y scale factor` <- las@header$`Y scale factor`
-            # header$`Z scale factor` <- las@header$`Z scale factor`
-            # header$`X offset` <- las@header$`X offset`
-            # header$`Y offset` <- las@header$`Y offset`
-            # header$`Z offset` <- las@header$`Z offset`
-            #
-            # header@VLR <- list()
-            # header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
-            # header@PHB[["Version Minor"]] <- 4L
-            # header@PHB[["Point Data Format ID"]] <- 6L
-            # wkt(header) <- sf::st_crs(las)$wkt
-            #
-            # rays <- LAS(lastraj, header)
-            # class(rays) <- "Rays"
 
             return(rays)
           })
@@ -120,7 +102,7 @@ setMethod("las2rays",
             las_with_traj@header@PHB[["Offset to point data"]] <- 375L
             wkt(las_with_traj@header) <- sf::st_crs(las)$wkt
 
-            rays <- new("Rays")
+            rays <- methods::new("Rays")
 
             rays@crs         <- las_with_traj@crs
             rays@header      <- las_with_traj@header

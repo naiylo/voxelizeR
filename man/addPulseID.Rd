@@ -7,7 +7,7 @@
 addPulseID(las, ...)
 }
 \arguments{
-\item{las}{An object of class LAS with added trajectory (\link{addTraj})}
+\item{las}{An object of class LAS with added trajectory}
 
 \item{...}{Additional arguments passed to other methods or functions.}
 }

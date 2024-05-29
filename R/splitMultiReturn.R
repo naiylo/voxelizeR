@@ -4,6 +4,7 @@
 #' @import dplyr
 #' @import lidR
 #' @importFrom utils head
+#' @importFrom stats setNames
 #'
 #' @author Benjamin Brede
 #'
@@ -52,14 +53,15 @@ setMethod("splitMultiReturn",
             multi_return <- pc %>%
               dplyr::filter(.data$NumberOfReturns > 1) %>%
               dplyr::group_by(.data$pulseID) %>%
-              dplyr::mutate(Xorigin = c(.data$Xorigin[1], head(.data$X, -1)),
-                            Yorigin = c(.data$Yorigin[1], head(.data$Y, -1)),
-                            Zorigin = c(.data$Zorigin[1], head(.data$Z, -1))) %>%
+              dplyr::mutate(Xorigin = c(.data$Xorigin[1], utils::head(.data$X, -1)),
+                            Yorigin = c(.data$Yorigin[1], utils::head(.data$Y, -1)),
+                            Zorigin = c(.data$Zorigin[1], utils::head(.data$Z, -1))) %>%
               dplyr::ungroup()
 
-            rays@data <- data.table::rbind(single_return, multi_return) %>%
+            rays@data <- rbind(single_return, multi_return) %>%
               dplyr::arrange(.data$gpstime, .data$ReturnNumber) %>%
-              data.table::setNames(names(rays@data))
+              stats::setNames(names(rays@data))
+
             rays
 
 })

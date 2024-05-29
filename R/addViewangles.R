@@ -1,7 +1,7 @@
 #' Add View Zenith Angle (VZA) and View Azimuth Angle (VAA) to Rays
 #'
-#' @import lidR
-#' @import pracma
+#' @importFrom lidR add_lasattribute
+#' @importFrom pracma acosd
 #'
 #' @author Benjamin Brede
 #'
@@ -37,15 +37,15 @@ setMethod("addViewangles",
             vy <- rays$Ytraj - rays$Y
             vz <- abs(rays$Ztraj - rays$Z)
 
-            vza <- acosd(vz / sqrt(vx ^ 2 + vy ^ 2 + vz ^ 2))
+            vza <- pracma::acosd(vz / sqrt(vx ^ 2 + vy ^ 2 + vz ^ 2))
 
             vaa <- ifelse(vx <= 0,
-                          acosd(-vy / sqrt(vx ^ 2 + vy ^ 2)),
-                          360 - acosd(-vy / sqrt(vx ^ 2 + vy ^ 2)))
+                          pracma::acosd(-vy / sqrt(vx ^ 2 + vy ^ 2)),
+                          360 - pracma::acosd(-vy / sqrt(vx ^ 2 + vy ^ 2)))
 
             rays %>%
-              add_lasattribute(x = vza, name = "VZA", desc = "VZA") %>%
-              add_lasattribute(x = vaa, name = "VAA", desc = "VAA")
+              lidR::add_lasattribute(x = vza, name = "VZA", desc = "VZA") %>%
+              lidR::add_lasattribute(x = vaa, name = "VAA", desc = "VAA")
 
           })
 

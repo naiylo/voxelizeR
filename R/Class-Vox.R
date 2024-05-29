@@ -1,11 +1,12 @@
 #' An S4 class to represent voxels
 #'
-#' @import sf
+#' @importFrom sf st_crs
+#' @importFrom utils head
 #'
 #' @author Benjamin Brede
 #'
 #' @description
-#' Class Vox is the representation of a 3D grid of regularly spaced volumes, typically produced by voxelization (\link{voxelize}) of \link{Rays} object.
+#' Class Vox is the representation of a 3D grid of regularly spaced volumes, typically produced by voxelization Rays object.
 #'
 #' @slot data Voxel data with XYZvoxel columns and attributes (depend on mode)
 #' @slot extent Voxel grid extent in vox crs. (xmin, ymin, zmin, ymin, ymax, zmax)
@@ -99,7 +100,7 @@ setMethod("show", "Vox", function(object) {
   cat("resolution       :", object@resolution, "\n")
   cat("mode             :", object@mode, "\n")
   cat("height normalized:", object@height_normalized, "\n")
-  cat("coord. ref.      :", st_crs(object)$Name, "\n")
+  cat("coord. ref.      :", sf::st_crs(object)$Name, "\n")
 
   return(invisible(object))
 })
@@ -116,5 +117,5 @@ setMethod("show", "Vox", function(object) {
 #' @export
 
 head.Vox <- function(x, ...) {
-  head(x@data)
+  utils::head(x@data)
 }

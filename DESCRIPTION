@@ -18,5 +18,8 @@ Imports:
     pracma,
     lidR,
     magrittr,
+    methods,
+    stats,
     sf,
-    methods
+    terra,
+    pbmcapply
