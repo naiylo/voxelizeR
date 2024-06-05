@@ -1,7 +1,9 @@
 #' Translate Vox to sds
 #'
-#' @import terra
-#' @import dplyr
+#' @importFrom dplyr filter full_join mutate select
+#' @importFrom stats setNames
+#' @importFrom raster crop
+#' @importFrom terra sds
 #'
 #' @author Benjamin Brede
 #'

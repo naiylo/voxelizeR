@@ -1,6 +1,6 @@
 #' An S4 class to represent voxels
 #'
-#' @importFrom sf st_crs
+#' @importFrom sf st_crs NA_crs_
 #' @importFrom utils head
 #'
 #' @author Benjamin Brede

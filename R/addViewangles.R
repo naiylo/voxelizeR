@@ -1,5 +1,6 @@
 #' Add View Zenith Angle (VZA) and View Azimuth Angle (VAA) to Rays
 #'
+#' @importFrom data.table fread
 #' @importFrom lidR add_lasattribute
 #' @importFrom pracma acosd
 #'

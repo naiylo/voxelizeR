@@ -1,8 +1,10 @@
 #' Translate LAS object to Rays
 #'
-#' @import lidR
-#' @import data.table
 #' @importFrom methods new
+#' @importFrom sf st_crs
+#' @importFrom sf st_crs<-
+#' @importFrom sf st_bbox
+#' @importFrom data.table setkey
 #'
 #' @author Benjamin Brede
 #'

@@ -7,14 +7,14 @@ vox <- new("Vox",
 
 dem <- rast(nrows=10, ncols=10)
 values(dem) <- runif(ncell(dem), min = 0, max = 10) # Random heights between 0 and 10
-crs(dem) <- "EPSG:4326"
+raster::crs(dem) <- "EPSG:4326"
 
 
-test_that("normalize_height function works correctly", {
+test_that("normalize_voxel_height function works correctly", {
   #TODO the crs of vox is not initialized correctly so it does not work -> ask Benjamin
   #print(dem)
   #print(vox)
-  #normalize_height(vox, dem)
+  #normalize_voxel_height(vox, dem)
   #expect_true(inherits(normalized_vox, "Vox"))
 
   # Check if the height has been normalized

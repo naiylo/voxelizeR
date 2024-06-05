@@ -1,7 +1,6 @@
 #' Prepare tiles that define the voxelization region
 #'
-#' @import dplyr
-#' @import sf
+#' @importFrom sf st_bbox st_sfc st_make_grid st_sf st_as_sfc st_geometry st_crs st_polygon st_set_crs st_linestring
 #'
 #' @author Benjamin Brede
 #'

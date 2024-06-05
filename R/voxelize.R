@@ -1,11 +1,12 @@
 #' Voxelize point cloud with ray-tracing
 #'
-#' @import data.table
-#' @import dplyr
-#' @import parallel
-#' @import terra
-#' @import pbmcapply
 #' @importFrom methods new
+#' @importFrom sf st_crs st_bbox st_coordinates st_as_sfc st_intersects st_distance
+#' @importFrom methods setGeneric setMethod
+#' @importFrom parallel mclapply
+#' @importFrom pbmcapply pbmclapply
+#' @importFrom dplyr arrange bind_rows group_by mutate select slice summarise ungroup filter
+#' @importFrom data.table data.table
 #'
 #' @author Benjamin Brede
 #'

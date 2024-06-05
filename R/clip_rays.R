@@ -1,8 +1,8 @@
 #' Fast clipping of rays according to voi
 #'
-#' @import dplyr
-#' @import data.table
+#' @importFrom data.table as.data.table
 #' @importFrom methods new
+#' @importFrom sf st_bbox st_crs
 #'
 #' @author Benjamin Brede
 #'
@@ -56,7 +56,7 @@ setMethod("clip_rays",
                      aoi["xmax"], aoi["ymax"], zrange["zmax"])
 
             clipped_dt <- clip_rays_df(pc = rays@data, voi = voi, buffer = unname(buffer)) %>%
-              as.data.table()
+              data.table::as.data.table()
 
             # occlusion processing: extend pulses
             if (occ_extend) {

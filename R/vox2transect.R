@@ -1,8 +1,6 @@
 #' Translate Vox to transect
 #'
-#' @import terra
-#' @import sf
-#' @import dplyr
+#' @importFrom sf st_coordinates st_geometry_type st_as_binary st_as_sf st_intersection st_distance
 #'
 #' @author Benjamin Brede
 #'

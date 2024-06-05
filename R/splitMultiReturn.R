@@ -1,10 +1,8 @@
 #' Split multi-return into single return point cloud
 #'
-#' @import data.table
-#' @import dplyr
-#' @import lidR
 #' @importFrom utils head
 #' @importFrom stats setNames
+#' @importFrom dplyr arrange filter group_by mutate ungroup
 #'
 #' @author Benjamin Brede
 #'

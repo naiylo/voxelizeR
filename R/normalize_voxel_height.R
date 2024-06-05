@@ -1,7 +1,8 @@
 #' Normalize voxel heights by terrain
 #'
-#' @import terra
-#' @import dplyr
+#' @importFrom raster ncell values<-
+#' @importFrom terra rast resample crds
+#' @importFrom dplyr rename mutate inner_join
 #'
 #' @author Benjamin Brede
 #'
@@ -10,11 +11,11 @@
 #' It resamples the DEM to match the resolution and extent of the voxels and then adjusts
 #' the voxel heights accordingly.
 #'
-#' @name normalize_height
-#' @aliases normalize_height,normalize_height-methods
-#' @rdname normalize_height-methods
+#' @name normalize_voxel_height
+#' @aliases normalize_voxel_height,normalize_voxel_height-methods
+#' @rdname normalize_voxel_height-methods
 #' @docType methods
-#' @usage normalize_height(vox, dem, ...)
+#' @usage normalize_voxel_height(vox, dem, ...)
 #'
 #' @param vox An object of class 'Vox' representing the voxel data.
 #' @param dem An object of class 'SpatRaster' representing the digital elevation model.
@@ -24,13 +25,13 @@
 #'
 #' @export
 
-setGeneric("normalize_height",
+setGeneric("normalize_voxel_height",
            function(vox,
-                    dem, ...) standardGeneric("normalize_height"))
+                    dem, ...) standardGeneric("normalize_voxel_height"))
 
-#' @rdname normalize_height-methods
+#' @rdname normalize_voxel_height-methods
 
-setMethod("normalize_height", signature = c("Vox", "SpatRaster"), definition = function(vox, dem) {
+setMethod("normalize_voxel_height", signature = c("Vox", "SpatRaster"), definition = function(vox, dem) {
 
   # Ensure that the CRS is correctly set and compatible
   crs_vox <- vox@crs
