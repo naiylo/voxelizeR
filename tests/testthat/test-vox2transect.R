@@ -1,3 +1,4 @@
+#TODO are these realistic mock data
 vox <- new("Vox",
            data = data.frame(Xvoxel = 1:5, Yvoxel = 1:5, Zvoxel = 1:5),
            resolution = c(x = 1, y = 1, z = 1),
