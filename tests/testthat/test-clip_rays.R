@@ -23,7 +23,7 @@ aoi <- st_bbox(tiles) %>%
   setNames(names(st_bbox(tiles)))
 
 test_that("Clipping rays works", {
-  #print(rays)
+  print(rays)
   # TODO fix Error in `D != 0`: comparison (!=) is possible only for atomic and list types (Übergabe der daten falsch?)
   #result <- clip_rays(rays,aoi = aoi,zrange = zrange,buffer = 3)
 })
