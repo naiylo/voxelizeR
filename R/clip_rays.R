@@ -1,3 +1,9 @@
+utils::globalVariables(c(
+  "CodeOrigin", "OriginOutside", "CodeHit", "CodeOut", "X", "Xorigin",
+  "D", "Yorigin", "Y", "Zorigin", "Z", "Xclip", "Yclip", "Zclip",
+  "XYZisHit", "ReturnNumber", "NumberOfReturns", "lx", "ly", "lz", "d"
+))
+
 #' Fast clipping of rays according to voi
 #'
 #' @importFrom data.table as.data.table
@@ -56,26 +62,25 @@ setMethod("clip_rays",
                      aoi["xmax"], aoi["ymax"], zrange["zmax"])
 
             clipped_dt <- clip_rays_df(pc = rays@data, voi = voi, buffer = unname(buffer)) %>%
-              data.table::as.data.table()
+              as.data.table()
 
             # occlusion processing: extend pulses
             if (occ_extend) {
 
               clipped_dt <- data.table::copy(rays@data) %>%
                 # only last returns
-                filter(.data$ReturnNumber == .data$NumberOfReturns) %>%
-                # select(X, Y, Z, Xorigin, Yorigin, Zorigin) %>%
-                mutate(lx = .data$X - .data$Xorigin,
-                       ly = .data$Y - .data$Yorigin,
-                       lz = .data$Z - .data$Zorigin,
-                       d = extension / sqrt(.data$lx ^ 2 + .data$ly ^ 2 + .data$lz ^ 2),
-                       Xorigin = .data$X,
-                       Yorigin = .data$Y,
-                       Zorigin = .data$Z,
-                       X = .data$d * .data$lx + .data$X,
-                       Y = .data$d * .data$ly + .data$Y,
-                       Z = .data$d * .data$lz + .data$Z) %>%
-                select(-.data$lx, -.data$ly, -.data$lz, -.data$d) %>%
+                filter(ReturnNumber == NumberOfReturns) %>%
+                mutate(lx = X - Xorigin,
+                       ly = Y - Yorigin,
+                       lz = Z - Zorigin,
+                       d = extension / sqrt(lx ^ 2 + ly ^ 2 + lz ^ 2),
+                       Xorigin = X,
+                       Yorigin = Y,
+                       Zorigin = Z,
+                       X = d * lx + X,
+                       Y = d * ly + Y,
+                       Z = d * lz + Z) %>%
+                select(-lx, -ly, -lz, -d) %>%
                 mutate(IsOccluded = 1,
                        XYZisHit = 0) %>%
                 # # treat occluded pulses separate from regular ones
@@ -85,7 +90,7 @@ setMethod("clip_rays",
 
             if (nrow(clipped_dt) == 0) {
               # return empty rays object
-              clipped_rays <- methods::new("Rays") %>%
+              clipped_rays <- new("Rays") %>%
                 st_set_crs(st_crs(rays))
 
             } else {
@@ -148,21 +153,26 @@ setMethod("clip_rays",
 #' @noRd
 
 clip_rays_df <- function(pc, voi, buffer = rep(0, 3)) {
+  # Ensure 'pc' has the required columns
+  required_columns <- c("X", "Y", "Z", "Xorigin", "Yorigin", "Zorigin")
+  missing_columns <- setdiff(required_columns, names(pc))
+  if (length(missing_columns) > 0) {
+    stop(paste("The input 'pc' is missing the following required columns:", paste(missing_columns, collapse = ", ")))
+  }
 
-  # subtract buffer from min coordinates, add to max coordinates
+  # Subtract buffer from min coordinates, add to max coordinates
   voi <- voi + c(-buffer, buffer)
 
-  INSIDE = 0L  # 000000
-  LEFT = 1L    # 000001
-  RIGHT = 2L   # 000010
-  FRONT = 4L   # 000100
-  BACK = 8L    # 001000
-  BOTTOM = 16L # 010000
-  TOP = 32L    # 100000
+  INSIDE <- 0L  # 000000
+  LEFT <- 1L    # 000001
+  RIGHT <- 2L   # 000010
+  FRONT <- 4L   # 000100
+  BACK <- 8L    # 001000
+  BOTTOM <- 16L # 010000
+  TOP <- 32L    # 100000
 
-  # on boundary = inside
+  # On boundary = inside
   compute_code <- function(x, y, z) {
-    # integer initializes as 0 == INSIDE
     code <- integer(length = length(x))
     code[x < voi["xmin"]] <- LEFT
     code[x > voi["xmax"]] <- RIGHT
@@ -182,89 +192,75 @@ clip_rays_df <- function(pc, voi, buffer = rep(0, 3)) {
 
   is_trivial <- trivial_accept | trivial_reject
 
-  while(nrow(pc) != 0) {
-
-    pc_trivial_accept <- rbind(pc_trivial_accept,
-                               pc[trivial_accept,])
+  while (nrow(pc) != 0) {
+    pc_trivial_accept <- rbind(pc_trivial_accept, pc[trivial_accept,])
 
     if (all(is_trivial)) {
       pc <- data.frame(matrix(ncol = ncol(pc), nrow = 0, dimnames = list(NULL, names(pc))))
-
     } else {
-
       pc <- pc[!is_trivial,] %>%
-        mutate(#CodeOrigin = bitwAnd(code_origin[!is_trivial], bitwNot(code_origin_boundary[!is_trivial])),
-          #CodeHit = bitwAnd(code_hit[!is_trivial], bitwNot(code_hit_boundary[!is_trivial])),
+        mutate(
           CodeOrigin = code_origin[!is_trivial],
           CodeHit = code_hit[!is_trivial],
-          # if origin is outside the viewport; otherwise hit will be outside (otherwise it would be trivial)
-          OriginOutside = .data$CodeOrigin != 0,
-          # At least one endpoint is outside the clip rectangle; pick it.
-          CodeOut = if_else(.data$OriginOutside, .data$CodeOrigin, .data$CodeHit)) %>%
-        group_split(.data$CodeOut) %>%
+          OriginOutside = CodeOrigin != 0,
+          CodeOut = if_else(OriginOutside, CodeOrigin, CodeHit)
+        ) %>%
+        group_split(CodeOut) %>%
         lapply(FUN = function(df) {
           if (nrow(df) == 0) {
             NULL
           } else if (bitwAnd(df$CodeOut[1], LEFT)) {
             df %>%
-              mutate(D = (voi["xmin"] - .data$X) / (.data$Xorigin - .data$X),
+              mutate(D = (voi["xmin"] - X) / (Xorigin - X),
                      Xclip = voi["xmin"],
-                     Yclip = .data$D * (.data$Yorigin - .data$Y) + .data$Y,
-                     Zclip = .data$D * (.data$Zorigin - .data$Z) + .data$Z)
-
+                     Yclip = D * (Yorigin - Y) + Y,
+                     Zclip = D * (Zorigin - Z) + Z)
           } else if (bitwAnd(df$CodeOut[1], RIGHT)) {
             df %>%
-              mutate(D = (voi["xmax"] - .data$X) / (.data$Xorigin - .data$X),
+              mutate(D = (voi["xmax"] - X) / (Xorigin - X),
                      Xclip = voi["xmax"],
-                     Yclip = .data$D * (.data$Yorigin - .data$Y) + .data$Y,
-                     Zclip = .data$D * (.data$Zorigin - .data$Z) + .data$Z)
-
+                     Yclip = D * (Yorigin - Y) + Y,
+                     Zclip = D * (Zorigin - Z) + Z)
           } else if (bitwAnd(df$CodeOut[1], FRONT)) {
             df %>%
-              mutate(D = (voi["ymin"] - .data$Y) / (.data$Yorigin - .data$Y),
-                     Xclip = .data$D * (.data$Xorigin - .data$X) + .data$X,
+              mutate(D = (voi["ymin"] - Y) / (Yorigin - Y),
+                     Xclip = D * (Xorigin - X) + X,
                      Yclip = voi["ymin"],
-                     Zclip = .data$D * (.data$Zorigin - .data$Z) + .data$Z)
-
+                     Zclip = D * (Zorigin - Z) + Z)
           } else if (bitwAnd(df$CodeOut[1], BACK)) {
             df %>%
-              mutate(D = (voi["ymax"] - .data$Y) / (.data$Yorigin - .data$Y),
-                     Xclip = .data$D * (.data$Xorigin - .data$X) + .data$X,
+              mutate(D = (voi["ymax"] - Y) / (Yorigin - Y),
+                     Xclip = D * (Xorigin - X) + X,
                      Yclip = voi["ymax"],
-                     Zclip = .data$D * (.data$Zorigin - .data$Z) + .data$Z)
-
+                     Zclip = D * (Zorigin - Z) + Z)
           } else if (bitwAnd(df$CodeOut[1], BOTTOM)) {
             df %>%
-              mutate(D = (voi["zmin"] - .data$Z) / (.data$Zorigin - .data$Z),
-                     Xclip = .data$D * (.data$Xorigin - .data$X) + .data$X,
-                     Yclip = .data$D * (.data$Yorigin - .data$Y) + .data$Y,
+              mutate(D = (voi["zmin"] - Z) / (Zorigin - Z),
+                     Xclip = D * (Xorigin - X) + X,
+                     Yclip = D * (Yorigin - Y) + Y,
                      Zclip = voi["zmin"])
           } else {
             df %>%
-              mutate(D = (voi["zmax"] - .data$Z) / (.data$Zorigin - .data$Z),
-                     Xclip = .data$D * (.data$Xorigin - .data$X) + .data$X,
-                     Yclip = .data$D * (.data$Yorigin - .data$Y) + .data$Y,
+              mutate(D = (voi["zmax"] - Z) / (Zorigin - Z),
+                     Xclip = D * (Xorigin - X) + X,
+                     Yclip = D * (Yorigin - Y) + Y,
                      Zclip = voi["zmax"])
           }
         }) %>%
         bind_rows() %>%
-        # eliminate zero length rays
-        filter(.data$D != 0) %>%
-        # if origin was outside, hit coordinates will stay the same
-        mutate(X = ifelse(.data$OriginOutside, .data$X, .data$Xclip),
-               Y = ifelse(.data$OriginOutside, .data$Y, .data$Yclip),
-               Z = ifelse(.data$OriginOutside, .data$Z, .data$Zclip),
-               # if origin was outside, origin will become clipped coordinate
-               Xorigin = ifelse(.data$OriginOutside, .data$Xclip, .data$Xorigin),
-               Yorigin = ifelse(.data$OriginOutside, .data$Yclip, .data$Yorigin),
-               Zorigin = ifelse(.data$OriginOutside, .data$Zclip, .data$Zorigin),
-               # if origin was outside: XYZisHit will decide
-               # if origin was not outside: no original hit
-               XYZisHit = .data$OriginOutside & .data$XYZisHit) %>%
-        # select the same columns as in pc
+        filter(D != 0) %>%
+        mutate(
+          X = ifelse(OriginOutside, X, Xclip),
+          Y = ifelse(OriginOutside, Y, Yclip),
+          Z = ifelse(OriginOutside, Z, Zclip),
+          Xorigin = ifelse(OriginOutside, Xclip, Xorigin),
+          Yorigin = ifelse(OriginOutside, Yclip, Yorigin),
+          Zorigin = ifelse(OriginOutside, Zclip, Zorigin),
+          XYZisHit = OriginOutside & XYZisHit
+        ) %>%
         select(all_of(names(pc)))
 
-      code_hit <- compute_code(.data$pc$X, .data$pc$Y, .data$pc$Z)
+      code_hit <- compute_code(pc$X, pc$Y, pc$Z)
       code_origin <- compute_code(pc$Xorigin, pc$Yorigin, pc$Zorigin)
 
       trivial_accept <- bitwOr(code_origin, code_hit) == 0

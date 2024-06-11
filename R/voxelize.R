@@ -1,3 +1,10 @@
+utils::globalVariables(c(
+  "EFPL", "EPL", "FPL", "Hits", "IsHit", "IsOccluded", "MEFPL", "MEFPLInd",
+  "MEPL", "MFPL", "MPL", "PL", "RDI", "ReturnID", "TBC_BL1", "Voxel_N",
+  "Xentering", "Xexit", "Xold", "Xvoxel", "Yentering", "Yexit", "Yold",
+  "Yvoxel", "Zentering", "Zexit", "Zold", "Zvoxel", "ae", "d", "var"
+))
+
 #' Voxelize point cloud with ray-tracing
 #'
 #' @importFrom methods new
@@ -148,27 +155,27 @@ setMethod("voxelize",
             # pc_scaled <- data.table::copy(las@data) %>%
             pc_scaled <- rays@data %>%
               as.data.frame() %>%
-              select(.data$X, .data$Y, .data$Z, .data$Xorigin, .data$Yorigin, .data$Zorigin, .data$XYZisHit, .data$ReturnID)
+              select(X, Y, Z, Xorigin, Yorigin, Zorigin, XYZisHit, ReturnID)
 
             ## occlusion processing: extend pulses to zrange["zmin"] - res["z"] (subtract res to avoid edge effects)
             if (voxel_mode == "OCC") {
               pc_occlusion <- data.table::copy(rays@data) %>%
-                filter(.data$ReturnNumber == .data$NumberOfReturns) %>%
-                select(.data$X, .data$Y, .data$Z, .data$Xorigin, .data$Yorigin, .data$Zorigin, .data$XYZisHit, .data$ReturnID) %>%
-                mutate(lx = .data$X - .data$Xorigin,
-                       ly = .data$Y - .data$Yorigin,
-                       lz = .data$Z - .data$Zorigin,
-                       d = (.data$zrange["zmin"] - .data$res["z"] - .data$Zorigin) / .data$lz,
-                       Xold = .data$X,
-                       Yold = .data$Y,
-                       Zold = .data$Z,
-                       X = .data$d * .data$lx + .data$Xorigin,
-                       Y = .data$d * .data$ly + .data$Yorigin,
-                       Z = .data$zrange["zmin"] - .data$res["z"],
-                       Xorigin = .data$Xold,
-                       Yorigin = .data$Yold,
-                       Zorigin = .data$Zold) %>%
-                select(-.data$lx, -.data$ly, -.data$lz, -.data$d, -.data$Xold, -.data$Yold, -.data$Zold) %>%
+                filter(ReturnNumber == NumberOfReturns) %>%
+                select(X, Y, Z, Xorigin, Yorigin, Zorigin, XYZisHit, ReturnID) %>%
+                mutate(lx = X - Xorigin,
+                       ly = Y - Yorigin,
+                       lz = Z - Zorigin,
+                       d = (zrange["zmin"] - res["z"] - Zorigin) / lz,
+                       Xold = X,
+                       Yold = Y,
+                       Zold = Z,
+                       X = d * lx + Xorigin,
+                       Y = d * ly + Yorigin,
+                       Z = zrange["zmin"] - res["z"],
+                       Xorigin = Xold,
+                       Yorigin = Yold,
+                       Zorigin = Zold) %>%
+                select(-lx, -ly, -lz, -d, -Xold, -Yold, -Zold) %>%
                 mutate(IsOccluded = TRUE,
                        XYZisHit = 0,
                        # treat occluded pulses separate from regular ones
@@ -189,12 +196,12 @@ setMethod("voxelize",
             }) %>%
               bind_rows() %>%
               # shift & scale
-              mutate(X = (.data$X - voi_global["xmin"]) / res["x"],
-                     Y = (.data$Y - voi_global["ymin"]) / res["y"],
-                     Z = (.data$Z - voi_global["zmin"]) / res["z"],
-                     Xorigin = (.data$Xorigin - voi_global["xmin"]) / res["x"],
-                     Yorigin = (.data$Yorigin - voi_global["ymin"]) / res["y"],
-                     Zorigin = (.data$Zorigin - voi_global["zmin"]) / res["z"])
+              mutate(X = (X - voi_global["xmin"]) / res["x"],
+                     Y = (Y - voi_global["ymin"]) / res["y"],
+                     Z = (Z - voi_global["zmin"]) / res["z"],
+                     Xorigin = (Xorigin - voi_global["xmin"]) / res["x"],
+                     Yorigin = (Yorigin - voi_global["ymin"]) / res["y"],
+                     Zorigin = (Zorigin - voi_global["zmin"]) / res["z"])
 
             # if no pulses go through target volume defined by blocks & no empty files should be written, finish processing here
             if (nrow(pc_scaled) == 0) {
@@ -258,33 +265,33 @@ setMethod("voxelize",
                                                  .data[[paste0(dim, "origin")]] <= grid & grid <= .data[[dim]] + 2) %>%
                                         mutate(D = (grid - .data[[dim]]) / (.data[[paste0(dim, "origin")]] - .data[[dim]])) %>%
                                         # for cases division by zero; when origin and hit overlap in one or more dimensions
-                                        filter(!is.infinite(abs(.data$D)))
+                                        filter(!is.infinite(abs(D)))
                                     }) %>%
                   bind_rows() %>%
-                  arrange(.data$ReturnID, .data$D) %>%
+                  arrange(ReturnID, D) %>%
                   # the pulse entering is where it exits from the previous crossing
-                  mutate(Xexit = .data$D * (.data$Xorigin - .data$X) + .data$X,
-                         Yexit = .data$D * (.data$Yorigin - .data$Y) + .data$Y,
-                         Zexit = .data$D * (.data$Zorigin - .data$Z) + .data$Z,
-                         Xentering = data.table::shift(.data$Xexit, type = "lead"),
-                         Yentering = data.table::shift(.data$Yexit, type = "lead"),
-                         Zentering = data.table::shift(.data$Zexit, type = "lead")) %>%
+                  mutate(Xexit = D * (Xorigin - X) + X,
+                         Yexit = D * (Yorigin - Y) + Y,
+                         Zexit = D * (Zorigin - Z) + Z,
+                         Xentering = data.table::shift(Xexit, type = "lead"),
+                         Yentering = data.table::shift(Yexit, type = "lead"),
+                         Zentering = data.table::shift(Zexit, type = "lead")) %>%
                   # prevent crossings to be counted across hits
                   # shift ReturnID to find out if next crossing belongs to the same ReturnID
-                  dplyr::filter(.data$ReturnID == data.table::shift(.data$ReturnID, type = "lead", fill = -1L)) %>%
+                  dplyr::filter(ReturnID == data.table::shift(ReturnID, type = "lead", fill = -1L)) %>%
                   # + 1) - 1L is to counteract symmetry of as.integer at 0: as.integer(-0.1) -> 0, but needs to be -1
-                  mutate(Xvoxel = as.integer(pmin(.data$Xentering, .data$Xexit) + 1) - 1L,
-                         Yvoxel = as.integer(pmin(.data$Yentering, .data$Yexit) + 1) - 1L,
-                         Zvoxel = as.integer(pmin(.data$Zentering, .data$Zexit) + 1) - 1L) %>%
+                  mutate(Xvoxel = as.integer(pmin(Xentering, Xexit) + 1) - 1L,
+                         Yvoxel = as.integer(pmin(Yentering, Yexit) + 1) - 1L,
+                         Zvoxel = as.integer(pmin(Zentering, Zexit) + 1) - 1L) %>%
                   # consider only crossings within the block
-                  filter(.data$Xvoxel >= minX_scaled & .data$Xvoxel < maxX_scaled,
-                         .data$Yvoxel >= minY_scaled & .data$Yvoxel < maxY_scaled,
-                         .data$Zvoxel >= minZ_scaled & .data$Zvoxel < maxZ_scaled) %>%
+                  filter(Xvoxel >= minX_scaled & Xvoxel < maxX_scaled,
+                         Yvoxel >= minY_scaled & Yvoxel < maxY_scaled,
+                         Zvoxel >= minZ_scaled & Zvoxel < maxZ_scaled) %>%
                   # calculate PL, and scale to pc-coordinate system units
-                  mutate(PL = sqrt(((.data$Xexit - .data$Xentering) * res["x"]) ^ 2 + ((.data$Yexit - .data$Yentering) * res["y"]) ^ 2 + ((.data$Zexit - .data$Zentering) * res["z"]) ^ 2)) %>%
+                  mutate(PL = sqrt(((Xexit - Xentering) * res["x"]) ^ 2 + ((Yexit - Yentering) * res["y"]) ^ 2 + ((Zexit - Zentering) * res["z"]) ^ 2)) %>%
                   # prevent case when pulse goes through grid crossings to produce 2 crossings
-                  filter(.data$PL != 0) %>%
-                  select(-.data$Xexit, -.data$Yexit, -.data$Zexit, -.data$Xorigin, -.data$Yorigin, -.data$Zorigin)
+                  filter(PL != 0) %>%
+                  select(-Xexit, -Yexit, -Zexit, -Xorigin, -Yorigin, -Zorigin)
 
 
                 #### voxel mode LAD ####
@@ -292,51 +299,51 @@ setMethod("voxelize",
                 if (voxel_mode == "LAD") {
                   hit_voxels <- crossings %>%
                     # no targets outside of the voi should be stored as hit voxels
-                    filter(.data$XYZisHit == 1,
-                           .data$X >= minX_scaled & .data$X < maxX_scaled,
-                           .data$Y >= minY_scaled & .data$Y < maxY_scaled,
-                           .data$Z >= minZ_scaled & .data$Z < maxZ_scaled,
+                    filter(XYZisHit == 1,
+                           X >= minX_scaled & X < maxX_scaled,
+                           Y >= minY_scaled & Y < maxY_scaled,
+                           Z >= minZ_scaled & Z < maxZ_scaled,
                            # only consider crossings "behind"/after the hit in terms of the vector from origin to hit
-                           .data$D < 0) %>%
-                    group_by(.data$ReturnID) %>%
+                           D < 0) %>%
+                    group_by(ReturnID) %>%
                     # crossing closest to hit has largest (smallest absolute) D = closest to 0
-                    slice(which.max(.data$D)) %>%
+                    slice(which.max(D)) %>%
                     ungroup() %>%
                     # calculate FPL, and scale to pc-coordinate system units
-                    mutate(FPL = sqrt(((.data$X - .data$Xentering) * res["x"]) ^ 2 + ((.data$Y - .data$Yentering) * res["y"]) ^ 2 + ((.data$Z - .data$Zentering) * res["z"]) ^ 2),
+                    mutate(FPL = sqrt(((X - Xentering) * res["x"]) ^ 2 + ((Y - Yentering) * res["y"]) ^ 2 + ((Z - Zentering) * res["z"]) ^ 2),
                            IsHit = TRUE) %>%
-                    select(.data$ReturnID, .data$IsHit, .data$Xvoxel, .data$Yvoxel, .data$Zvoxel, .data$PL, .data$FPL)
+                    select(ReturnID, IsHit, Xvoxel, Yvoxel, Zvoxel, PL, FPL)
 
                   # between each row of crossings and the next, there was a voxel crossed
                   empty_voxels <- crossings %>%
                     # only consider crossings between hit and origin in terms of the vector from origin to hit
-                    filter(.data$D > 0) %>%
+                    filter(D > 0) %>%
                     mutate(FPL = 0,
                            IsHit = FALSE) %>%
-                    select(.data$Xvoxel, .data$Yvoxel, .data$Zvoxel, .data$ReturnID, .data$IsHit, .data$PL, .data$FPL)
+                    select(Xvoxel, Yvoxel, Zvoxel, ReturnID, IsHit, PL, FPL)
 
 
                   #### voxel mode OCC ####
                 } else if (voxel_mode == "OCC") {
                   # simpler version and faster to calculate than for LAD
                   hit_voxels <- pc_scaled_tile %>%
-                    filter(.data$XYZisHit == 1, !.data$IsOccluded) %>%
-                    mutate(Xvoxel = as.integer(floor(.data$X)),
-                           Yvoxel = as.integer(floor(.data$Y)),
-                           Zvoxel = as.integer(floor(.data$Z)),
+                    filter(XYZisHit == 1, !IsOccluded) %>%
+                    mutate(Xvoxel = as.integer(floor(X)),
+                           Yvoxel = as.integer(floor(Y)),
+                           Zvoxel = as.integer(floor(Z)),
                            IsHit = TRUE) %>%
-                    filter(.data$Xvoxel >= minX_scaled & .data$Xvoxel < maxX_scaled,
-                           .data$Yvoxel >= minY_scaled & .data$Yvoxel < maxY_scaled,
-                           .data$Zvoxel >= minZ_scaled & .data$Zvoxel < maxZ_scaled) %>%
-                    select(.data$ReturnID, .data$IsHit, .data$IsOccluded, .data$Xvoxel, .data$Yvoxel, .data$Zvoxel)
+                    filter(Xvoxel >= minX_scaled & Xvoxel < maxX_scaled,
+                           Yvoxel >= minY_scaled & Yvoxel < maxY_scaled,
+                           Zvoxel >= minZ_scaled & Zvoxel < maxZ_scaled) %>%
+                    select(ReturnID, IsHit, IsOccluded, Xvoxel, Yvoxel, Zvoxel)
 
                   # between each row of crossings and the next, there was a voxel crossed
                   empty_voxels <- crossings %>%
                     # only consider crossings between hit and origin in terms of the vector from origin to hit
-                    filter(.data$D > 0) %>%
+                    filter(D > 0) %>%
                     mutate(FPL = 0,
                            IsHit = FALSE) %>%
-                    select(.data$Xvoxel, .data$Yvoxel, .data$Zvoxel, .data$ReturnID, .data$IsHit, .data$IsOccluded)
+                    select(Xvoxel, Yvoxel, Zvoxel, ReturnID, IsHit, IsOccluded)
                 }
 
 
@@ -345,52 +352,52 @@ setMethod("voxelize",
                 if (voxel_mode == "LAD") {
                   vox_res <- hit_voxels %>%
                     bind_rows(empty_voxels) %>%
-                    mutate(EPL = -log(1 - .data$PL * ac_single) / ac_single,
-                           EFPL = -log(1 - .data$FPL * ac_single) / ac_single) %>%
-                    group_by(.data$Xvoxel, .data$Yvoxel, .data$Zvoxel) %>%
+                    mutate(EPL = -log(1 - PL * ac_single) / ac_single,
+                           EFPL = -log(1 - FPL * ac_single) / ac_single) %>%
+                    group_by(Xvoxel, Yvoxel, Zvoxel) %>%
                     summarise(Voxel_N = n(),
-                              Hits = sum(.data$IsHit),
+                              Hits = sum(IsHit),
 
                               # path lengths
-                              MPL = mean(.data$PL, na.rm = TRUE),
-                              MEPL =  mean(.data$EPL, na.rm = TRUE),
+                              MPL = mean(PL, na.rm = TRUE),
+                              MEPL =  mean(EPL, na.rm = TRUE),
 
                               # free path lengths
-                              MFPL = mean(.data$FPL, na.rm = TRUE),
-                              MEFPL = mean(.data$EFPL, na.rm = TRUE),
-                              MEFPLInd = mean(.data$EFPL * .data$IsHit, na.rm = TRUE),
+                              MFPL = mean(FPL, na.rm = TRUE),
+                              MEFPL = mean(EFPL, na.rm = TRUE),
+                              MEFPLInd = mean(EFPL * IsHit, na.rm = TRUE),
 
                               # ratio between empirical variance to mean of the effective path length
-                              ae = .data$var(.data$EPL, na.rm = TRUE) / .data$MEPL) %>%
+                              ae = var(EPL, na.rm = TRUE) / MEPL) %>%
                     ungroup() %>%
                     mutate(# N relevant for LAD computations (only empty + hit counts)
                       # Voxel_N = sum of interactions within voxel
 
                       # relative density index
-                      RDI = .data$Hits / .data$Voxel_N,
+                      RDI = Hits / Voxel_N,
                       # contact frequency
-                      CF = .data$RDI / .data$MPL,
+                      CF = RDI / MPL,
                       # modified contact frequency
-                      MCF = .data$RDI / .data$MFPL,
+                      MCF = RDI / MFPL,
                       # theoretical bias-corrected Maximum-Likelihood estimator
-                      TBC_MLE = .data$RDI / .data$MEFPL - .data$MEFPLInd / (.data$Voxel_N * .data$MEFPL ^ 2),
+                      TBC_MLE = RDI / MEFPL - MEFPLInd / (Voxel_N * MEFPL ^ 2),
                       # Beer-Lambert
-                      BL = -log(1 - .data$RDI) / .data$MPL,
+                      BL = -log(1 - RDI) / MPL,
                       # theoretical bias-corrected Beer-Lambert, equal path lengths
-                      TBC_BL1 = ifelse(.data$RDI < 1,
-                                       -1 / .data$MEPL * (log(1 - .data$RDI) + .data$RDI / (2 * .data$Voxel_N * (1 - .data$RDI))),
-                                       log(2 * .data$Voxel_N + 2) / .data$MEPL),
+                      TBC_BL1 = ifelse(RDI < 1,
+                                       -1 / MEPL * (log(1 - RDI) + RDI / (2 * Voxel_N * (1 - RDI))),
+                                       log(2 * Voxel_N + 2) / MEPL),
                       # theoretical bias-corrected Beer-Lambert, unequal path lengths
-                      TBC_BL2 = 1 / .data$ae * (1 - sqrt(1 - 2 * .data$ae * .data$TBC_BL1)))
+                      TBC_BL2 = 1 / ae * (1 - sqrt(1 - 2 * ae * TBC_BL1)))
 
                 } else if (voxel_mode == "OCC") {
                   vox_res <- hit_voxels %>%
                     bind_rows(empty_voxels) %>%
-                    group_by(.data$Xvoxel, .data$Yvoxel, .data$Zvoxel) %>%
+                    group_by(Xvoxel, Yvoxel, Zvoxel) %>%
                     summarise(Voxel_N = n(),
-                              Hits = sum(.data$IsHit),
-                              Empty = sum(!.data$IsHit & !.data$IsOccluded),
-                              Occluded =  sum(.data$IsOccluded)) %>%
+                              Hits = sum(IsHit),
+                              Empty = sum(!IsHit & !IsOccluded),
+                              Occluded =  sum(IsOccluded)) %>%
                     ungroup()
                 }
 
@@ -399,7 +406,7 @@ setMethod("voxelize",
             })
 
             # output format Vox
-            vox <- methods::new("Vox")
+            vox <- new("Vox")
 
             # fix problem with pbmclapply when only 1 tile is processed
             if (nrow(tiles) == 1) {
@@ -415,7 +422,7 @@ setMethod("voxelize",
             vox@mode <- voxel_mode
             vox@height_normalized <- FALSE
 
-            vox
+            return(vox)
           })
 
 
