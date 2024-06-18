@@ -1,3 +1,7 @@
+utils::globalVariables(c(
+  "gpstime"
+))
+
 #' Translate LAS object to Rays
 #'
 #' @importFrom methods new
@@ -31,8 +35,6 @@
 #' @return Returns a Rays object with the trajectory information included.
 #'
 #' @export
-
-utils::globalVariables(c("gpstime"))
 
 setGeneric("las2rays",
            function(las, traj, ...) standardGeneric("las2rays"))

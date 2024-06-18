@@ -4,10 +4,12 @@
 \alias{initialize,Vox-method}
 \title{Initialize object vox}
 \usage{
-\S4method{initialize}{Vox}(.Object, ...)
+\S4method{initialize}{Vox}(.Object, crs = NA_crs_, ...)
 }
 \arguments{
 \item{.Object}{Object}
+
+\item{crs}{CRS of Vox as \link{st_crs}}
 
 \item{...}{Additional arguments passed to other methods or functions.}
 }

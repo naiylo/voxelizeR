@@ -34,6 +34,13 @@ setMethod("addViewangles",
           signature = c("Rays"),
           definition = function(rays) {
 
+            # Check if Rays object is empty
+            if (nrow(rays@data) == 0) {
+              rays@data$VZA <- numeric(0)
+              rays@data$VAA <- numeric(0)
+              return(rays)
+            }
+
             vx <- rays$Xtraj - rays$X
             vy <- rays$Ytraj - rays$Y
             vz <- abs(rays$Ztraj - rays$Z)

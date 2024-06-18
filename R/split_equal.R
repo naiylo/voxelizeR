@@ -16,13 +16,15 @@
 #' @export
 
 split_equal <- function(x, n) {
-
   if (n == 1) {
     list(x)
+  } else if (length(x) == 0) {
+    rep(list(integer(0)), n)
   } else {
-    split(x, cut(seq_along(x), n, labels = FALSE))
+    groups <- cut(seq_along(x), n, labels = FALSE)
+    # Ensure that the groups are as evenly distributed as possible
+    split(x, groups)
   }
-
 }
 
 #' Split vector into equal parts

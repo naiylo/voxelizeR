@@ -19,6 +19,12 @@ addPulseID = function(las, ...) UseMethod("addPulseID")
 
 addPulseID.LAS <- function(las, ...) {
 
+  # Check if LAS object is empty
+  if (npoints(las) == 0) {
+    las@data$pulseID <- integer(0)
+    return(las)
+  }
+
   pulses <- lidR::retrieve_pulses(las)
   lidR::add_lasattribute(las, x = pulses$pulseID, name = "pulseID", desc = "pulseID")
 

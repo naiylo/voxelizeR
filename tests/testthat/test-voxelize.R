@@ -42,7 +42,6 @@ test_that("Test if voxelize works correctly", {
       process_order_tiles = "random"
     )
   )
-
   expect_s4_class(vox, "Vox")
   expect_true(all(c("Xvoxel", "Yvoxel", "Zvoxel") %in% colnames(vox@data)))
   expect_true(nrow(vox@data) > 0)
@@ -137,21 +136,3 @@ test_that("Voxelize function respects the resolution parameter", {
   expect_true(nrow(vox@data) > 0)
 })
 
-# Should work but not possible on Windows
-#test_that("Voxelize function processes tiles in parallel", {
-#vox <- suppressWarnings(
-#voxelize(
-#rays = rays,
-#tiles = tiles,
-#zrange = zrange,
-#res = res,
-#ac_single = 0.001,
-#voxel_mode = "OCC",
-#process_tiles_parallel = 2,
-#process_order_tiles = "random"
-#)
-#)
-#expect_s4_class(vox, "Vox")
-#expect_true(all(c("Xvoxel", "Yvoxel", "Zvoxel") %in% colnames(vox@data)))
-#expect_true(nrow(vox@data) > 0)
-#})

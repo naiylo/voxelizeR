@@ -1,7 +1,7 @@
 # Create an S4 LAS object
 data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
 las <- readLAS(data_file)
-laz <- las[1:10]
+laz <- las[1:100]
 # Create trajectory for the object
 traj_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
 traj <- fread(traj_file, col.names = c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')) %>%
@@ -27,5 +27,7 @@ test_that("splitMultiReturn does not change the origin coordinates for single-re
   expect_equal(modified_rays@data$Zorigin[single_return_indices], original_rays@data$Zorigin[single_return_indices])
 })
 
-
-# TODO more tests for multireturn points (ask how to be sure that i have multireturn points)
+test_that("splitMultiReturn output data structure is consistent", {
+  modified_rays <- splitMultiReturn(rays)
+  expect_equal(class(modified_rays), class(rays))
+})

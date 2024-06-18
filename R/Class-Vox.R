@@ -33,13 +33,14 @@ setClass(
 #' @author Benjamin Brede
 #'
 #' @param .Object Object
+#' @param crs CRS of Vox as \link{st_crs}
 #' @param ... Additional arguments passed to other methods or functions.
 #'
 #' @return a vox object
 #'
 #' @export
 
-setMethod("initialize", "Vox", function(.Object, ...) {
+setMethod("initialize", "Vox", function(.Object, crs = NA_crs_, ...) {
 
   dims <- c("x", "y", "z")
 
@@ -55,7 +56,7 @@ setMethod("initialize", "Vox", function(.Object, ...) {
 
   .Object@mode <- "LAD"
   .Object@height_normalized <- FALSE
-  .Object@crs <- NA_crs_
+  .Object@crs <- st_crs(crs)
 
   return(.Object)
 })

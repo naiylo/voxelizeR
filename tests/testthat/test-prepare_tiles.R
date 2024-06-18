@@ -1,39 +1,56 @@
-# Assuming you have a sample AOI (Area of Interest) as an sf object for testing
-sample_aoi <- st_as_sf(data.frame(
-  id = 1:4,
-  x = c(0, 10, 10, 0),
-  y = c(0, 0, 10, 10),
-  stringsAsFactors = FALSE
-), coords = c("x", "y"), crs = 4326)
+# Initialize tiles for testing
+tiles <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                       res = c(x = 1, y = 1),
+                       tilesize = c(20, 20),
+                       crs = 32631)
 
 test_that("prepare_tiles returns an sf object", {
-  result <- prepare_tiles(sample_aoi, res = c(1, 1), tilesize = c(5, 5))
-  expect_s3_class(result, "sf")
+  expect_s3_class(tiles, "sf")
 })
 
 test_that("prepare_tiles handles sfc input", {
-  sfc_aoi <- st_geometry(sample_aoi)
-  result <- prepare_tiles(sfc_aoi, res = c(1, 1), tilesize = c(5, 5))
+  sfc_aoi <- st_geometry(st_as_sfc(st_bbox(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680), crs = 32631)))
+  result <- prepare_tiles(sfc_aoi, res = c(1, 1), tilesize = c(20, 20))
   expect_s3_class(result, "sf")
 })
 
 test_that("prepare_tiles handles bbox input", {
-  bbox_aoi <- st_bbox(sample_aoi)
-  result <- prepare_tiles(bbox_aoi, res = c(1, 1), tilesize = c(5, 5), crs = st_crs(sample_aoi))
+  bbox_aoi <- st_bbox(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680))
+  result <- prepare_tiles(bbox_aoi, res = c(1, 1), tilesize = c(20, 20), crs = 32631)
   expect_s3_class(result, "sf")
 })
 
 test_that("prepare_tiles handles numeric input", {
-  numeric_aoi <- st_bbox(sample_aoi)
-  result <- prepare_tiles(numeric_aoi, res = c(1, 1), tilesize = c(5, 5), crs = st_crs(sample_aoi))
+  numeric_aoi <- c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680)
+  result <- prepare_tiles(numeric_aoi, res = c(1, 1), tilesize = c(20, 20), crs = 32631)
   expect_s3_class(result, "sf")
 })
 
 test_that("prepare_tiles creates the correct number of tiles", {
-  result <- prepare_tiles(sample_aoi, res = c(1, 1), tilesize = c(5, 5))
-  expected_n_tiles <- ceiling((st_bbox(sample_aoi)[c("xmax", "ymax")] -
-                                 floor(st_bbox(sample_aoi)[c("xmin", "ymin")])) / c(5, 5))
-  expect_equal(dim(result)[1], prod(expected_n_tiles))
+  expected_n_tiles <- ceiling((c(xmax = 682300, ymax = 5763680) -
+                                 floor(c(xmin = 682130, ymin = 5763580))) / c(20, 20))
+  expect_equal(nrow(tiles), prod(expected_n_tiles))
 })
 
-# TODO maybe add tests for own data -> not sure how to get the aoi from the data
+test_that("prepare_tiles handles different resolutions correctly", {
+  result1 <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                           res = c(2, 2), tilesize = c(20, 20), crs = 32631)
+  result2 <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                           res = c(1, 1), tilesize = c(20, 20), crs = 32631)
+  expect_true(nrow(result1) <= nrow(result2), info = "Higher resolution should result in more tiles.")
+})
+
+test_that("prepare_tiles handles different tile sizes correctly", {
+  result1 <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                           res = c(1, 1), tilesize = c(40, 40), crs = 32631)
+  result2 <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                           res = c(1, 1), tilesize = c(20, 20), crs = 32631)
+  expect_true(nrow(result1) <= nrow(result2), info = "Smaller tile sizes should result in more tiles.")
+})
+
+test_that("prepare_tiles only includes tiles that intersect with the AOI", {
+  bbox_aoi <- st_as_sfc(st_bbox(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680), crs = 32631))
+  result <- prepare_tiles(bbox_aoi, res = c(1, 1), tilesize = c(20, 20))
+  intersects <- st_intersects(result, bbox_aoi, sparse = FALSE)
+  expect_true(all(intersects), info = "All tiles should intersect with the AOI.")
+})

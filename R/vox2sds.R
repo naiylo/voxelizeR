@@ -1,3 +1,7 @@
+utils::globalVariables(c(
+  "x", "y"
+))
+
 #' Translate Vox to sds
 #'
 #' @importFrom dplyr filter full_join mutate select
@@ -40,8 +44,8 @@ setMethod("vox2sds",
             vox_df <- vox@data %>%
               # XYZvoxel refers to voxel center
               # only rescale X and Y to global coordinates for raster creation
-              mutate(Xvoxel = (.data$Xvoxel + 0.5) * vox@resolution["x"] + vox@extent["xmin"],
-                     Yvoxel = (.data$Yvoxel + 0.5) * vox@resolution["y"] + vox@extent["ymin"])
+              mutate(Xvoxel = (Xvoxel + 0.5) * vox@resolution["x"] + vox@extent["xmin"],
+                     Yvoxel = (Yvoxel + 0.5) * vox@resolution["y"] + vox@extent["ymin"])
 
             features <- setdiff(names(vox_df), paste0(c("X", "Y", "Z"), "voxel"))
 
@@ -63,8 +67,8 @@ setMethod("vox2sds",
                                                     vox@extent["ymin"] + 0.5 * vox@resolution["y"],
                                                     vox@extent["ymin"] + 1.5 * vox@resolution["y"]))
 
-            minZ_scaled <- min(vox@data$Zvoxel)
-            maxZ_scaled <- max(vox@data$Zvoxel)
+            minZ_scaled <- min(vox@Zvoxel)
+            maxZ_scaled <- max(vox@Zvoxel)
             zs <- minZ_scaled:(maxZ_scaled - 1)
             zs_unscaled <- (zs + 0.5) * vox@resolution["z"] + vox@extent[3]
 
@@ -73,7 +77,7 @@ setMethod("vox2sds",
               zstack <- lapply(minZ_scaled:(maxZ_scaled - 1), function(z) {
 
                 vox_df_layer <- vox_df %>%
-                  filter(.data$Zvoxel == z)
+                  filter(Zvoxel == z)
 
                 # problem with empty layers: rast() will not produce desired resolution and extent
                 # so create explicitly
@@ -91,9 +95,9 @@ setMethod("vox2sds",
 
                   vox_df_layer %>%
                     full_join(corners_pixels, by = c("Xvoxel", "Yvoxel")) %>%
-                    rename(x = .data$Xvoxel,
-                           y = .data$Yvoxel) %>%
-                    select(.data$x, .data$y, all_of(feat)) %>%
+                    rename(x = Xvoxel,
+                           y = Yvoxel) %>%
+                    select(x, y, all_of(feat)) %>%
                     # digits parameter: prevent trouble with numerical precision
                     rast(type = "xyz",
                          digits = sign(max(vox@resolution[c("x", "y")]))) %>%

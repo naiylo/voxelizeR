@@ -4,12 +4,9 @@
 \name{normalize_voxel_height}
 \alias{normalize_voxel_height}
 \alias{normalize_voxel_height,normalize_voxel_height-methods}
-\alias{normalize_voxel_height,Vox,SpatRaster-method}
 \title{Normalize voxel heights by terrain}
 \usage{
 normalize_voxel_height(vox, dem, ...)
-
-\S4method{normalize_voxel_height}{Vox,SpatRaster}(vox, dem)
 }
 \arguments{
 \item{vox}{An object of class 'Vox' representing the voxel data.}

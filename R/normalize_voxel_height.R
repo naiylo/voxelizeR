@@ -1,3 +1,8 @@
+utils::globalVariables(c(
+  "DEMheight"
+))
+
+
 #' Normalize voxel heights by terrain
 #'
 #' @importFrom raster ncell values<-
@@ -15,7 +20,6 @@
 #' @aliases normalize_voxel_height,normalize_voxel_height-methods
 #' @rdname normalize_voxel_height-methods
 #' @docType methods
-#' @usage normalize_voxel_height(vox, dem, ...)
 #'
 #' @param vox An object of class 'Vox' representing the voxel data.
 #' @param dem An object of class 'SpatRaster' representing the digital elevation model.
@@ -24,21 +28,14 @@
 #' @return An object of class 'Vox' with normalized heights.
 #'
 #' @export
+#'
+normalize_voxel_height <- function(vox, dem, ...) {
 
-setGeneric("normalize_voxel_height",
-           function(vox,
-                    dem, ...) standardGeneric("normalize_voxel_height"))
-
-#' @rdname normalize_voxel_height-methods
-
-setMethod("normalize_voxel_height", signature = c("Vox", "SpatRaster"), definition = function(vox, dem) {
-
-  # Ensure that the CRS is correctly set and compatible
-  crs_vox <- vox@crs
-  crs_dem <- crs(dem)
-
-  if (crs_vox != crs(dem)) {
-    print("Not equal CRS")
+  if (!inherits(vox, "Vox")) {
+    stop("Input 'vox' must be an object of class 'Vox'")
+  }
+  if (!inherits(dem, "SpatRaster")) {
+    stop("Input 'dem' must be an object of class 'SpatRaster'")
   }
 
   ## resample dem to Vox resolution and extent
@@ -51,20 +48,20 @@ setMethod("normalize_voxel_height", signature = c("Vox", "SpatRaster"), definiti
 
   # dem as data.frame
   dem_df <- as.data.frame(crds(dem_resample)) %>%
-    rename(Xvoxel = .data$x,
-           Yvoxel = .data$y) %>%
-    mutate(Xvoxel = bin_int(.data$Xvoxel, res = vox@resolution["x"], origin = vox@extent["xmin"]) - 1,
-           Yvoxel = bin_int(.data$Yvoxel, res = vox@resolution["y"], origin = vox@extent["ymin"]) - 1,
+    rename(Xvoxel = x,
+           Yvoxel = y) %>%
+    mutate(Xvoxel = bin_int(Xvoxel, res = vox@resolution["x"], origin = vox@extent["xmin"]) - 1,
+           Yvoxel = bin_int(Yvoxel, res = vox@resolution["y"], origin = vox@extent["ymin"]) - 1,
            DEMheight = bin_int(as.data.frame(dem_resample)[,1], res = vox@resolution["z"], origin = vox@extent["zmin"]))
 
   vox@data <- vox@data %>%
     inner_join(dem_df, by = c('Xvoxel', 'Yvoxel'), relationship = "many-to-many") %>%
-    mutate(Zvoxel = .data$Zvoxel - .data$DEMheight)
+    mutate(Zvoxel = Zvoxel - DEMheight)
 
   vox@extent["zmin"] <- 0
-  vox@extent["zmax"] <- max(vox@data$Zvoxel) * vox@resolution["z"]
+  vox@extent["zmax"] <- max(vox@data$Zvoxel, na.rm = TRUE) * vox@resolution["z"]
 
   vox@height_normalized <- TRUE
 
-  return(vox)
-  })
+  vox
+}

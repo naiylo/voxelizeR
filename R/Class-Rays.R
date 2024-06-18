@@ -97,24 +97,35 @@ setValidity("Rays", function(object) {
 
 setMethod("show", "Rays", function(object) {
 
-  size      <- format(las_size(object), units = "auto")
-  area      <- as.numeric(st_area(object))
-  area.h    <- area
-  npoints   <- nrow(object@data)
-  npulses   <- object@header[["Number of points by return"]][1]
-  npoints.h <- npoints
-  dpts      <- if (area > 0) npoints/area else 0
-  dpulse    <- if (area > 0) npulses/area else 0
-  ext       <- st_bbox(object)
-  phb       <- object@header@PHB
-  major     <- phb[["Version Major"]]
-  minor     <- phb[["Version Minor"]]
-  version   <- paste(major, minor, sep = ".")
-  format    <- phb[["Point Data Format ID"]]
-  units     <- st_crs(object)$units
-  units     <- if (is.null(units) || is.na(units)) "units" else units
+  size <- format(las_size(object), units = "auto")
 
-  areaprefix  <- ""
+  if (nrow(object@data) == 0) {
+    ext <- c(Inf, -Inf, Inf, -Inf)
+    area <- 0
+    npoints <- 0
+    npulses <- 0
+    dpts <- 0
+    dpulse <- 0
+  } else {
+    ext <- st_bbox(object)
+    area <- as.numeric(st_area(object))
+    npoints <- nrow(object@data)
+    npulses <- object@header[["Number of points by return"]][1]
+    dpts <- if (area > 0) npoints / area else 0
+    dpulse <- if (area > 0) npulses / area else 0
+  }
+
+  npoints.h <- npoints
+  area.h <- area
+  phb <- object@header@PHB
+  major <- phb[["Version Major"]]
+  minor <- phb[["Version Minor"]]
+  version <- paste(major, minor, sep = ".")
+  format <- phb[["Point Data Format ID"]]
+  units <- st_crs(object)$units
+  units <- if (is.null(units) || is.na(units)) "units" else units
+
+  areaprefix <- ""
   pointprefix <- ""
 
   if (area > 1000*1000/2)
