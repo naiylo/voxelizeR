@@ -1,10 +1,10 @@
 # voxelizeR
 
-[![GitHub](https://img.shields.io/github/license/naiylo/voxelizeR)](https://github.com/naiylo/voxelizeR//LICENSE) [![GitHub issues](https://img.shields.io/github/issues/naiylo/voxelizeR)](https://github.com/naiylo/voxelizeR/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/naiylo/voxelizeR)](https://github.com/naiylo/voxelizeR/commits/master)
+[![GitHub](https://img.shields.io/github/license/naiylo/voxelizeR)](https://github.com/naiylo/voxelizeR/blob/main/LICENSE)
 
 ### Overview
 
-The `voxelizeR` package provides functionalities for voxelizing LiDAR point cloud data. It implements ray-tracing algorithms to compute metrics such as Leaf Area Density (LAD) and perform occlusion mapping within defined spatial boundaries.
+The `voxelizeR` package provides functionalities for voxelizing LiDAR point cloud data. It implements ray-tracing algorithms to compute metrics such as Leaf Area Density (LAD) and perform occlusion mapping within defined spatial boundaries. It is developed in an cooperation of the "Deutsche GeoForschungsZentrum" and the "University of Potsdam".
 
 ### Installation
 
