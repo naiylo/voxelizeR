@@ -29,6 +29,11 @@ zrange <- c(0, 100) %>%
 # Prepare res
 res = c(x = 1, y = 1, z = 1)
 
+# Prepare mock dem
+dem <- rast(nrows=100, ncols=100)
+values(dem) <- runif(ncell(dem), min = 0, max = 100) # Random heights between 0 and 10
+raster::crs(dem) <- "EPSG:32631"
+
 vox <- suppressWarnings(
   voxelize(
     rays = rays,
@@ -41,13 +46,9 @@ vox <- suppressWarnings(
     process_order_tiles = "random"
   )
 )
-
-# Prepare mock dem
-dem <- rast(nrows=100, ncols=100)
-values(dem) <- runif(ncell(dem), min = 0, max = 100) # Random heights between 0 and 10
-raster::crs(dem) <- "EPSG:32631"
-
-normalized_vox <- suppressWarnings(normalize_voxel_height(vox, dem))
+# TODO ask where to get real DEM data because this way the DEM data does not fit and causes that 0 voxels are in the result
+# therefore the zmax is -Inf
+#show(vox)
 
 #result <- vox2sds(normalized_vox)
 
