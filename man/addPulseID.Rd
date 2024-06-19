@@ -14,6 +14,22 @@ addPulseID(las, ...)
 \description{
 This function adds a pulse ID attribute to an LAS object that has a trajectory.
 }
+\examples{
+# Load necessary packages and example data
+library(lidR)
+data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+data <- readLAS(data_file)
+
+# Reduce the LAS object size for faster examples
+data_reduced <- data[1:10]
+
+# Add pulse ID to the reduced dataset
+data_reduced <- addPulseID(data_reduced)
+
+# Check if pulseID attribute is added
+names(data_reduced@data)
+
+}
 \author{
 Benjamin Brede
 }

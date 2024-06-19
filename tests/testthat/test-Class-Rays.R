@@ -23,8 +23,8 @@ test_that("Rays object additional attributes are of correct type.", {
   expect_type(rays_obj@data$Xorigin, "double")
   expect_type(rays_obj@data$Yorigin, "double")
   expect_type(rays_obj@data$Zorigin, "double")
-  expect_type(rays_obj@data$XYZisHit, "logical")
-  expect_type(rays_obj@data$IsOccluded, "logical")
+  expect_type(rays_obj@data$XYZisHit, "double")
+  expect_type(rays_obj@data$IsOccluded, "double")
 })
 
 test_that("Rays object has correct header information.", {

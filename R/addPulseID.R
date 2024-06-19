@@ -1,7 +1,6 @@
 #' Add Pulse ID to LAS Object
 #'
-#' @importFrom lidR retrieve_pulses
-#' @importFrom lidR add_lasattribute
+#' @importFrom lidR retrieve_pulses add_lasattribute
 #'
 #' @author Benjamin Brede
 #'
@@ -10,6 +9,21 @@
 #'
 #' @param las An object of class LAS with added trajectory
 #' @param ... Additional arguments passed to other methods or functions.
+#'
+#' @examples
+#' # Load necessary packages and example data
+#' library(lidR)
+#' data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+#' data <- readLAS(data_file)
+#'
+#' # Reduce the LAS object size for faster examples
+#' data_reduced <- data[1:10]
+#'
+#' # Add pulse ID to the reduced dataset
+#' data_reduced <- addPulseID(data_reduced)
+#'
+#' # Check if pulseID attribute is added
+#' names(data_reduced@data)
 #'
 #' @export
 

@@ -23,6 +23,49 @@
 #'
 #' @return The input Rays object with two new attributes added: VZA and VAA.
 #'
+#' @examples
+#' # Load necessary packages and example data
+#' library(lidR)
+#' library(pracma)
+#' library(dplyr)
+#' library(data.table)
+#'
+#' # Read in LAS data
+#' data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+#' las <- readLAS(data_file)
+#'
+#' # Create a trajectory for the LAS object
+#' traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
+#' colnames <- c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')
+#' traj <- fread(traj_file[1], col.names = colnames) %>%
+#'   select(gpstime, Xorigin, Yorigin, Zorigin) %>%
+#'   rename(Xtraj = Xorigin,
+#'          Ytraj = Yorigin,
+#'          Ztraj = Zorigin)
+#'
+#' # Create a subset of the LAS data
+#' laz <- las[1:10]
+#'
+#' # Compute rays from LAS points and trajectory
+#' rays_obj <- las2rays(laz, traj)
+#'
+#' # Add view angles to the rays object
+#' rays_obj <- addViewangles(rays_obj)
+#'
+#' # Check if VZA and VAA attributes have been added
+#' names(rays_obj@data)
+#'
+#' # Verify that VZA values are within expected range (0 to 180 degrees)
+#' all(rays_obj@data$VZA >= 0 & rays_obj@data$VZA <= 180)
+#'
+#' # Verify that VAA values are within expected range (0 to 360 degrees)
+#' all(rays_obj@data$VAA >= 0 & rays_obj@data$VAA <= 360)
+#'
+#' # Example with a larger dataset
+#' laz_large <- las[1:1000]
+#' rays_large <- las2rays(laz_large, traj)
+#' rays_large <- addViewangles(rays_large)
+#'
 #' @export
 
 setGeneric("addViewangles",

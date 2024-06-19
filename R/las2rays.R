@@ -74,6 +74,7 @@ setMethod("las2rays",
 
             rays@crs         <- las_with_traj@crs
             rays@data        <- las_with_traj@data
+            rays@data$IsOccluded <- numeric()
             rays@index       <- las_with_traj@index
 
             return(rays)
