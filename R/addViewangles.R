@@ -24,7 +24,7 @@
 #' @return The input Rays object with two new attributes added: VZA and VAA.
 #'
 #' @examples
-#' # Load necessary packages and example data
+#' # Load required packages
 #' library(lidR)
 #' library(pracma)
 #' library(dplyr)

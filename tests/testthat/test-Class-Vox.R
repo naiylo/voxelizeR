@@ -1,21 +1,60 @@
+# Initialize everything we need
+
+# Create an S4 LAS object
+data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+las <- readLAS(data_file)
+epsg(las) <- 32631
+laz <- las[1:100]
+# Create trajectory for the object
+traj_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
+traj <- fread(traj_file, col.names = c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')) %>%
+  select(gpstime, Xorigin, Yorigin, Zorigin) %>%
+  rename(Xtraj = Xorigin,
+         Ytraj = Yorigin,
+         Ztraj = Zorigin)
+# Create an S4 Rays object
+rays <- las2rays(laz, traj)
+# Prepare tiles
+tiles <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                       res = c(x = 1, y = 1),
+                       tilesize = c(20, 20),
+                       crs = 32631)
+# Prepare aoi
+aoi <- st_bbox(tiles) %>%
+  as.numeric() %>%
+  setNames(names(st_bbox(tiles)))
+# Prepare zrange
+zrange <- c(50, 55) %>%
+  setNames(c("zmin", "zmax"))
+# Prepare res
+res = c(x = 1, y = 1, z = 1)
+
+vox <- suppressWarnings(
+  voxelize(
+    rays = rays,
+    tiles = tiles,
+    zrange = zrange,
+    res = res,
+    ac_single = 0.001,
+    voxel_mode = "OCC",
+    process_tiles_parallel = 1,
+    process_order_tiles = "random"
+  )
+)
+
 test_that("Vox object can be initialized", {
-  vox <- new("Vox")
   expect_true(is(vox, "Vox"))
 })
 
 test_that("Show method works for Vox", {
-  vox <- new("Vox")
   expect_output(print(vox), "class            : Vox")
 })
 
 test_that("Head method works for Vox", {
-  vox <- new("Vox")
-  vox@data <- data.frame(Xvoxel = 1:5, Yvoxel = 1:5, Zvoxel = 1:5)
-  expect_equal(nrow(head.Vox(vox)), 5)
+  expect_equal(nrow(head.Vox(vox)), 6)
 })
 
 test_that("Vox object validity", {
-  vox <- new("Vox")
   expect_true(validObject(vox))
 
   # Invalid mode
@@ -39,43 +78,27 @@ test_that("Vox object validity", {
 })
 
 test_that("Vox mode slot is initialized correctly", {
-  vox <- new("Vox")
-  expect_equal(vox@mode, "LAD")
+  expect_equal(vox@mode, "OCC")
 })
 
 test_that("Vox extent slot names are correct", {
-  vox <- new("Vox")
   expect_equal(names(vox@extent), c("xmin", "ymin", "zmin", "xmax", "ymax", "zmax"))
 })
 
 test_that("Vox resolution slot is initialized correctly", {
-  vox <- new("Vox")
   expect_equal(names(vox@resolution), c("x", "y", "z"))
 })
 
-test_that("Vox mode slot is initialized correctly", {
-  vox <- new("Vox")
-  expect_equal(vox@mode, "LAD")
-})
-
 test_that("Vox height_normalized slot is initialized correctly", {
-  vox <- new("Vox")
   expect_false(vox@height_normalized)
 })
 
-test_that("Vox crs slot is initialized correctly", {
-  vox <- new("Vox")
-  expect_equal(vox@crs, sf::NA_crs_)
-})
-
 test_that("Vox data slot maintains correct structure", {
-  vox <- new("Vox")
-  expect_equal(colnames(vox@data), c("Xvoxel", "Yvoxel", "Zvoxel"))
-  expect_equal(nrow(vox@data), 0)
+  expect_equal(colnames(vox@data), c("Xvoxel", "Yvoxel", "Zvoxel","Voxel_N", "Hits", "Empty", "Occluded"))
+  expect_equal(nrow(vox@data), 44)
 })
 
 test_that("Vox data slot can be manipulated", {
-  vox <- new("Vox")
   vox@data <- data.frame(Xvoxel = 1:5, Yvoxel = 1:5, Zvoxel = 1:5)
   expect_equal(nrow(vox@data), 5)
   expect_equal(colnames(vox@data), c("Xvoxel", "Yvoxel", "Zvoxel"))

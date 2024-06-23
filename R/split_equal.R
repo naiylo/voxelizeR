@@ -13,6 +13,16 @@
 #'
 #' @return list with parts of the vector
 #'
+#' @examples
+#' # Example 1: Split vector into groups of length 3
+#' split_equal2(1:10, 3)
+#' # Example 2: Split vector into groups of length 5
+#' split_equal2(1:10, 5)
+#' # Example 3: Split vector into groups of length greater than the vector length
+#' split_equal2(1:10, 20)
+#' # Example 4: Split an empty vector into groups of length 3 (returns an empty list)
+#' split_equal2(integer(0), 3)
+#'
 #' @export
 
 split_equal <- function(x, n) {

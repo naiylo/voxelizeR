@@ -14,6 +14,7 @@
 #' @return An integer representing the binned coordinate value.
 #'
 #' @examples
+#'
 #' # Example 1: Basic binning with default origin
 #' x1 <- 10.5
 #' res1 <- 2

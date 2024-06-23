@@ -26,6 +26,59 @@ Fast clipping of rays according to voi
 \details{
 Implementation of the Cohen-Sutherland algorithm: \url{https://en.wikipedia.org/wiki/Cohen\%E2\%80\%93Sutherland_algorithm}
 }
+\examples{
+# Load required packages
+library(data.table)
+library(lidR)
+library(sf)
+library(dplyr)
+
+# Initialize LAS object
+data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+las <- readLAS(data_file)
+epsg(las) <- 32631
+laz <- las[1:100]
+
+# Create trajectory for the object
+traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
+traj <- fread(traj_file, col.names = c('gpstime', 'roll', 'pitch',
+                                       'yaw', 'Xorigin', 'Yorigin',
+                                       'Zorigin')) \%>\%
+  select(gpstime, Xorigin, Yorigin, Zorigin) \%>\%
+  rename(Xtraj = Xorigin, Ytraj = Yorigin, Ztraj = Zorigin)
+
+# Create Rays object
+rays <- las2rays(laz, traj)
+
+# Define area of interest (AOI) and z-range
+aoi <- c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680)
+zrange <- c(zmin = 50, zmax = 55)
+
+# Example 1: Clip rays with no buffer
+clipped_rays_no_buffer <- clip_rays(rays, aoi, zrange, buffer = 0)
+print(clipped_rays_no_buffer)
+
+# Example 2: Clip rays with buffer
+buffer <- c(10, 10, 1)
+clipped_rays_with_buffer <- clip_rays(rays, aoi, zrange, buffer)
+print(clipped_rays_with_buffer)
+
+# Example 3: Clip rays with occlusion extension
+extension <- 1000
+clipped_rays_with_occlusion <- clip_rays(rays,
+                                         aoi,
+                                         zrange,
+                                         buffer = 0,
+                                         occ_extend = TRUE,
+                                         extension)
+print(clipped_rays_with_occlusion)
+
+# Example 4: Clip rays with empty input
+empty_rays <- new("Rays")
+clipped_empty_rays <- clip_rays(empty_rays, aoi, zrange, buffer = 0)
+print(clipped_empty_rays)
+
+}
 \author{
 Benjamin Brede
 }

@@ -22,6 +22,7 @@ bins it to the nearest grid point based on the specified resolution 'res' and
 an optional origin point 'origin'.
 }
 \examples{
+
 # Example 1: Basic binning with default origin
 x1 <- 10.5
 res1 <- 2

@@ -25,7 +25,7 @@ This function computes the View Zenith Angle (VZA) and View Azimuth Angle (VAA)
 for an object of class Rays.
 }
 \examples{
-# Load necessary packages and example data
+# Load required packages
 library(lidR)
 library(pracma)
 library(dplyr)

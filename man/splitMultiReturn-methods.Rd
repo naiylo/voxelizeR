@@ -15,10 +15,44 @@ splitMultiReturn(rays, ...)
 
 \item{...}{Additional arguments passed to other methods or functions.}
 }
+\value{
+An object of class 'Rays' with multi-return pulses split into single-return paths.
+}
 \description{
 This function processes a point cloud with multi-return laser pulses, splitting each multi-return
 into individual single-return paths. It ensures that each pulse ends at the first return and
 initiates a new path from the first to the subsequent returns.
+}
+\examples{
+# Load necessary libraries
+library(voxelizer)
+library(data.table)
+library(dplyr)
+library(lidR)
+
+# Create an S4 LAS object
+data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+las <- readLAS(data_file)
+laz <- las[1:100]  # Use a subset for the example
+
+# Create trajectory for the object
+traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
+traj <- fread(traj_file, col.names = c('gpstime', 'roll', 'pitch',
+                                       'yaw', 'Xorigin', 'Yorigin',
+                                       'Zorigin')) \%>\%
+  select(gpstime, Xorigin, Yorigin, Zorigin) \%>\%
+  rename(Xtraj = Xorigin, Ytraj = Yorigin, Ztraj = Zorigin)
+
+# Create an S4 Rays object
+rays <- las2rays(laz, traj)
+
+# Apply the splitMultiReturn function
+modified_rays <- splitMultiReturn(rays)
+
+# Check the result
+head(modified_rays@data)
+
+
 }
 \seealso{
 \link{las2rays}

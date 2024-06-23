@@ -31,6 +31,32 @@ This function converts a LAS object, which represents 3D point cloud data,
 into a Rays object. The conversion requires a trajectory dataset that contains
 the flight path information of the LiDAR sensor.
 }
+\examples{
+library(data.table)
+library(lidR)
+library(sf)
+library(dplyr)
+
+# Initialize LAS object
+data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+las <- readLAS(data_file)
+epsg(las) <- 32631
+laz <- las[1:100]
+
+# Create trajectory for the object
+traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
+traj <- fread(traj_file, col.names = c('gpstime', 'roll', 'pitch',
+                                       'yaw', 'Xorigin', 'Yorigin',
+                                       'Zorigin')) \%>\%
+  select(gpstime, Xorigin, Yorigin, Zorigin) \%>\%
+  rename(Xtraj = Xorigin, Ytraj = Yorigin, Ztraj = Zorigin)
+
+# Create Rays object with las2rays function
+rays <- las2rays(laz, traj)
+
+# Further checks in Class-Rays.R
+
+}
 \seealso{
 \code{\link{Rays-class}}
 }

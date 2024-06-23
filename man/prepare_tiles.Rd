@@ -27,6 +27,40 @@ and tile size, ensuring that the entire AOI is covered.
 The function assumes that the input AOI is in the same CRS as specified by the
 'crs' parameter.If the CRS does not match, the function may produce incorrect results.
 }
+\examples{
+library(sf)
+
+# Example 1: Prepare tiles for a numeric AOI
+numeric_aoi <- c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680)
+tiles <- prepare_tiles(numeric_aoi, res = c(1, 1), tilesize = c(20, 20), crs = 32631)
+print(tiles)
+
+# Example 2: Prepare tiles for a bounding box AOI
+bbox_aoi <- st_bbox(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                      crs = st_crs(32631))
+tiles <- prepare_tiles(bbox_aoi, res = c(1, 1), tilesize = c(20, 20), crs = 32631)
+print(tiles)
+
+# Example 3: Prepare tiles for an sfc AOI
+sfc_aoi <- st_as_sfc(st_bbox(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                               crs = 32631))
+tiles <- prepare_tiles(sfc_aoi, res = c(1, 1), tilesize = c(20, 20))
+print(tiles)
+
+# Example 4: Prepare tiles for an sf AOI
+sf_aoi <- st_as_sf(sfc_aoi)
+tiles <- prepare_tiles(sf_aoi, res = c(1, 1), tilesize = c(20, 20))
+print(tiles)
+
+# Example 5: Prepare tiles with different resolutions
+tiles <- prepare_tiles(numeric_aoi, res = c(2, 2), tilesize = c(20, 20), crs = 32631)
+print(tiles)
+
+# Example 6: Prepare tiles with different tile sizes
+tiles <- prepare_tiles(numeric_aoi, res = c(1, 1), tilesize = c(40, 40), crs = 32631)
+print(tiles)
+
+}
 \author{
 Benjamin Brede
 }

@@ -20,6 +20,17 @@ groups of length 'l' If 'n' is 1, it returns the original vector. Otherwise, it 
 the 'cut' function to create a factor that splits the sequence along the vector into
 'n' groups, which is then used by the 'split' function to divide the vector accordingly.
 }
+\examples{
+# Example 1: Split vector into groups of length 3
+split_equal2(1:10, 3)
+# Example 2: Split vector into groups of length 5
+split_equal2(1:10, 5)
+# Example 3: Split vector into groups of length greater than the vector length
+split_equal2(1:10, 20)
+# Example 4: Split an empty vector into groups of length 3 (returns an empty list)
+split_equal2(integer(0), 3)
+
+}
 \author{
 Benjamin Brede
 }

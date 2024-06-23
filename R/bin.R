@@ -14,6 +14,7 @@
 #' @return The binned coordinate value, adjusted to the nearest grid point.
 #'
 #' @examples
+#'
 #' # Example 1: Basic binning with default origin
 #' x1 <- 10.5
 #' res1 <- 2

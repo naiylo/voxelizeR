@@ -11,7 +11,7 @@
 #' @param ... Additional arguments passed to other methods or functions.
 #'
 #' @examples
-#' # Load necessary packages and example data
+#' # Load required packages
 #' library(lidR)
 #' data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
 #' data <- readLAS(data_file)
