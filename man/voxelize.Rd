@@ -48,6 +48,71 @@ and a set of tiles that define the area to be processed. It then performs ray-tr
 vertical boundaries (\code{zrange}) and at a given resolution (\code{res}). The function supports parallel processing
 of tiles and allows for different processing orders to optimize performance.
 }
+\examples{
+# Load required packages
+library(lidR)
+library(pracma)
+library(dplyr)
+library(data.table)
+library(sf)
+
+# Read in LAS data
+data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
+las <- readLAS(data_file)
+
+# Ensure the CRS of the LAS object
+epsg(las) <- 32631
+
+# Create a trajectory for the LAS object
+traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizer")
+colnames <- c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')
+traj <- fread(traj_file, col.names = colnames) \%>\%
+  select(gpstime, Xorigin, Yorigin, Zorigin) \%>\%
+  rename(Xtraj = Xorigin,
+         Ytraj = Yorigin,
+         Ztraj = Zorigin) \%>\%
+  mutate(gpstime = as.numeric(gpstime),
+         Xtraj = as.numeric(Xtraj),
+         Ytraj = as.numeric(Ytraj),
+         Ztraj = as.numeric(Ztraj))
+
+# Create a subset of the LAS data
+laz <- las[1:10,]
+
+# Compute rays from LAS points and trajectory
+rays <- las2rays(laz, traj)
+
+# Prepare tiles
+tiles <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                       res = c(x = 1, y = 1),
+                       tilesize = c(20, 20),
+                       crs = 32631)
+
+# Prepare aoi
+aoi <- st_bbox(tiles) \%>\%
+  as.numeric() \%>\%
+  setNames(names(st_bbox(tiles)))
+
+# Prepare zrange
+zrange <- c(50, 55) \%>\%
+  setNames(c("zmin", "zmax"))
+
+# Prepare res
+res <- c(x = 1, y = 1, z = 1)
+
+# Use voxelize function
+vox <- suppressWarnings(voxelize(
+  rays = rays,
+  tiles = tiles,
+  zrange = zrange,
+  res = res,
+  ac_single = 0.001,
+  voxel_mode = "OCC",
+  process_tiles_parallel = 1,
+  process_order_tiles = "random"
+))
+
+}
 \author{
 Benjamin Brede
 }
