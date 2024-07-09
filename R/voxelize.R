@@ -8,7 +8,7 @@ utils::globalVariables(c(
 #' Voxelize point cloud with ray-tracing
 #'
 #' @importFrom methods new
-#' @importFrom sf st_crs st_bbox st_coordinates st_as_sfc st_intersects st_distance
+#' @importFrom sf st_coordinates st_geometry_type st_as_binary st_as_sf st_intersection st_distance st_intersects st_as_sfc st_crs st_bbox
 #' @importFrom methods setGeneric setMethod
 #' @importFrom parallel mclapply
 #' @importFrom pbmcapply pbmclapply
