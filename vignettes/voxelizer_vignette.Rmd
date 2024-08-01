@@ -7,11 +7,14 @@ output:
     toc: true
     toc_depth: 2
     toc_float: true
+    css: style.css
 vignette: >
   %\VignetteIndexEntry{The voxelizeR package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+# The `voxelizeR` package
 
 # Introduction
 
