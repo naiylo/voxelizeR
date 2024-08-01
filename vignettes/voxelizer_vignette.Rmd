@@ -1,19 +1,27 @@
 ---
-title: "voxelizer_vignette"
-output: rmarkdown::html_vignette
+title: "The voxelizeR package"
+author: "Benjamin Brede and Oskar Schiedewitz"
+output: 
+  bookdown::html_document2:
+    number_sections: true
+    toc: true
+    toc_depth: 2
+    toc_float: true
 vignette: >
-  %\VignetteIndexEntry{voxelizer_vignette}
+  %\VignetteIndexEntry{The voxelizeR package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
+# Introduction
 
-```{r setup}
-library(voxelizer)
+The `voxelizeR` package provides functionalities for voxelizing LiDAR point cloud data. It implements ray-tracing algorithms to compute metrics such as Leaf Area Density (LAD) and perform occlusion mapping within defined spatial boundaries. It is developed in an cooperation of the "Deutsche GeoForschungsZentrum" and the "University of Potsdam".
+
+# Installation
+
+You can install the development version of `voxelizeR` from GitHub using `devtools`:
+
+``` r
+install.packages("devtools")
+devtools::install_github("naiylo/voxelizeR")
 ```
