@@ -29,9 +29,9 @@ zrange <- c(0, 100) %>%
 # Prepare res
 res = c(x = 1, y = 1, z = 1)
 
-# Prepare mock dem
-dem <- rast(nrows=100, ncols=100)
-values(dem) <- runif(ncell(dem), min = 0, max = 100) # Random heights between 0 and 10
+# Prepare Dem
+dem_file <- system.file("extdata","UAV4LAI_DEM.tif", package = "voxelizer")
+dem <- rast(dem_file)
 raster::crs(dem) <- "EPSG:32631"
 
 vox <- suppressWarnings(
@@ -46,28 +46,22 @@ vox <- suppressWarnings(
     process_order_tiles = "random"
   )
 )
-# TODO ask where to get real DEM data because this way the DEM data does not fit and causes that 0 voxels are in the result
-# therefore the zmax is -Inf
-#show(vox)
 
-#result <- vox2sds(normalized_vox)
+normalized_vox <- normalize_voxel_height(vox,dem)
+result <- vox2sds(normalized_vox)
+show(normalized_vox)
+show(result)
 
 test_that("vox2sds works correctly and transforms a vox to a SpatRasterDataset", {
-  #expect_s3_class(result, "SpatRasterDataset")
-})
-
-test_that("Check the dimensions of the result", {
-  #expect_equal(dim(result), c(5, 5, 5))
-})
-
-test_that("Check the resolution of the result", {
-  #expect_equal(dim(result), c(1, 1))
+  expect_true(inherits(result, "SpatRasterDataset"))
 })
 
 test_that("Check the extent of the result", {
-  #expect_equal(extent(result), c(0, 5, 0, 5))
-})
+  extent_result <- terra::ext(result)
+  extent_normalized_vox <- normalized_vox@extent
 
-test_that("vox2sds keeps the resolution", {
-  #expect_equal(terra::units(result), c("count", "count", rep("m", 5), "m2", rep("m-1", 7)))
+  expect_equal(extent_result$xmin, extent_normalized_vox["xmin"])
+  expect_equal(extent_result$xmax, extent_normalized_vox["xmax"])
+  expect_equal(extent_result$ymin, extent_normalized_vox["ymin"])
+  expect_equal(extent_result$ymax, extent_normalized_vox["ymax"])
 })

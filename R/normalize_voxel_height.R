@@ -92,9 +92,9 @@ utils::globalVariables(c(
 #'   process_order_tiles = "random"
 #' ))
 #'
-#' # Prepare mock dem
-#' dem <- rast(nrows=100, ncols=100)
-#' values(dem) <- runif(ncell(dem), min = 0, max = 1) # Random heights between 0 and 1
+#' # Prepare Dem
+#' dem_file <- system.file("extdata","UAV4LAI_DEM.tif", package = "voxelizer")
+#' dem <- rast(dem_file)
 #' raster::crs(dem) <- "EPSG:32631"
 #'
 #' # Normalize voxel heights using the DEM

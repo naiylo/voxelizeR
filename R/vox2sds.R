@@ -7,7 +7,7 @@ utils::globalVariables(c(
 #' @importFrom dplyr filter full_join mutate select
 #' @importFrom stats setNames
 #' @importFrom raster crop
-#' @importFrom terra sds
+#' @importFrom terra sds rast
 #'
 #' @author Benjamin Brede
 #'
@@ -67,8 +67,8 @@ setMethod("vox2sds",
                                                     vox@extent["ymin"] + 0.5 * vox@resolution["y"],
                                                     vox@extent["ymin"] + 1.5 * vox@resolution["y"]))
 
-            minZ_scaled <- min(vox@Zvoxel)
-            maxZ_scaled <- max(vox@Zvoxel)
+            minZ_scaled <- min(vox@data$Zvoxel)
+            maxZ_scaled <- max(vox@data$Zvoxel)
             zs <- minZ_scaled:(maxZ_scaled - 1)
             zs_unscaled <- (zs + 0.5) * vox@resolution["z"] + vox@extent[3]
 

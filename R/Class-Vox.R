@@ -168,11 +168,11 @@ setMethod("show", "Vox", function(object) {
 
   cat("class            : Vox\n")
   cat("voxels           :", nrow(object@data), "\n")
-  cat("extent           :", paste(object@extent, collapse = ", "), "(xmin, ymin, zmin, ymin, ymax, zmax)\n")
+  cat("extent           :", paste(object@extent, collapse = ", "), "(xmin, ymin, zmin, xmax, ymax, zmax)\n")
   cat("resolution       :", object@resolution, "\n")
   cat("mode             :", object@mode, "\n")
   cat("height normalized:", object@height_normalized, "\n")
-  cat("coord. ref.      :", sf::st_crs(object)$Name, "\n")
+  cat("coord. ref.      :", sf::st_crs(object@crs)$input, "\n")
 
   return(invisible(object))
 })

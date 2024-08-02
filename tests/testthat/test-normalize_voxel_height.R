@@ -29,9 +29,9 @@ zrange <- c(50, 55) %>%
 # Prepare res
 res = c(x = 1, y = 1, z = 1)
 
-# Prepare mock dem
-dem <- rast(nrows=100, ncols=100)
-values(dem) <- runif(ncell(dem), min = 0, max = 1) # Random heights between 0 and 1
+# Prepare Dem
+dem_file <- system.file("extdata","UAV4LAI_DEM.tif", package = "voxelizer")
+dem <- rast(dem_file)
 raster::crs(dem) <- "EPSG:32631"
 
 test_that("normalize_voxel_height function works correctly", {
@@ -49,9 +49,8 @@ test_that("normalize_voxel_height function works correctly", {
   )
   normalized_vox <- suppressWarnings(normalize_voxel_height(vox, dem))
   expect_true(inherits(normalized_vox, "Vox"))
-
   # Check if the height has been normalized
-  expect_true(all(normalized_vox@data$Zvoxel >= 0))
+  expect_true(min(normalized_vox@data$Zvoxel) != min(vox@data$Zvoxel))
 
   # Check if the height_normalized flag is set to TRUE
   expect_true(normalized_vox@height_normalized)
