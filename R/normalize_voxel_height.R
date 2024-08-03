@@ -104,7 +104,7 @@ utils::globalVariables(c(
 #' print(normalized_vox)
 #'
 #' @export
-#'
+
 normalize_voxel_height <- function(vox, dem, ...) {
 
   if (!inherits(vox, "Vox")) {

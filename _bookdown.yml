@@ -1,2 +1,14 @@
 book_filename: "voxelizer_vignette"
 rmd_files: ["vignettes/voxelizer_vignette.Rmd"]
+output_dir: "docs"
+new_session: yes
+
+bookdown::gitbook:
+  split_by: chapter+number
+  config:
+    toc:
+      collapse: section
+      before: |
+        <li><a href="./">Home</a></li>
+    edit: true
+

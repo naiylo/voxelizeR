@@ -1,5 +1,5 @@
 ---
-title: "The voxelizeR package"
+title: "The voxelizeR Package"
 author: "Benjamin Brede and Oskar Schiedewitz"
 output: 
   bookdown::html_document2:
@@ -9,22 +9,36 @@ output:
     toc_float: true
     css: style.css
 vignette: >
-  %\VignetteIndexEntry{The voxelizeR package}
+  %\VignetteIndexEntry{The voxelizeR Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-# The `voxelizeR` package
-
 # Introduction
 
-The `voxelizeR` package provides functionalities for voxelizing LiDAR point cloud data. It implements ray-tracing algorithms to compute metrics such as Leaf Area Density (LAD) and perform occlusion mapping within defined spatial boundaries. It is developed in an cooperation of the "Deutsche GeoForschungsZentrum" and the "University of Potsdam".
+## The voxelizeR Package
+
+The `voxelizeR` package offers advanced functionalities for voxelizing LiDAR point cloud data. By implementing sophisticated ray-tracing algorithms, it enables the computation of critical metrics such as Leaf Area Density (LAD) and facilitates occlusion mapping within specified spatial boundaries. This package is a collaborative development between the "Deutsche GeoForschungsZentrum" and the "University of Potsdam".
+
+This comprehensive guide aims to elucidate the primary features of the `voxelizeR` package and provide practical examples using the included sample datasets.
+
+## Key Functionalities
+
+The `voxelizeR` package includes the following key functionalities:
+
+-   **Voxelization of LiDAR Point Clouds**: Efficiently converts LiDAR point cloud data into a voxel-based representation.
+-   **Ray-Tracing Algorithms**: Implements advanced ray-tracing techniques to calculate metrics such as Leaf Area Density (LAD).
+-   **Occlusion Mapping**: Performs occlusion mapping to analyze visibility and coverage within defined spatial boundaries.
+-   **Integration with R**: Seamlessly integrates with the R programming environment, allowing for easy manipulation and analysis of voxelized data.
 
 # Installation
 
-You can install the development version of `voxelizeR` from GitHub using `devtools`:
+To install the development version of `voxelizeR` from GitHub, you can use the `devtools` package. Follow these steps:
 
 ``` r
 install.packages("devtools")
 devtools::install_github("naiylo/voxelizeR")
 ```
+# Documentation
+
+This section features a documentation about every single function and class of the `voxelizeR` package. Each documentation includes among other things a explanation of the different parameters and a small example on how to use them.
