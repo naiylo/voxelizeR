@@ -11,4 +11,10 @@ bookdown::gitbook:
       before: |
         <li><a href="./">Home</a></li>
     edit: true
+    number_sections: true # Enable numbering for all sections
+    section_numbering:
+      level_1: true   # Enable numbering for top-level headers
+      level_2: true   # Enable numbering for second-level headers
+      level_3: false  # Disable numbering for third-level headers
+      level_4: false  # Disable numbering for fourth-level headers
 

@@ -41,4 +41,132 @@ devtools::install_github("naiylo/voxelizeR")
 ```
 # Documentation
 
-This section features a documentation about every single function and class of the `voxelizeR` package. Each documentation includes among other things a explanation of the different parameters and a small example on how to use them.
+This section features documentation for every single function and class of the `voxelizeR` package. Each documentation includes an explanation of the different parameters and a small example of how to use them. This documentation section is automatically generated from the `roxygen2` comments in each function. (For further documentation, make sure to visit the Functions section of this vignette.)
+
+<!-- This is the code to automatically load the documentation out of the roxygen2 comment section of each R-script -->
+
+```{r, echo=FALSE, results='asis'}
+
+# Load necessary library
+library(tools)
+
+# Function to process Rd files and format them for a vignette
+process_rd <- function(file) {
+  # Check if file exists
+  if (!file.exists(file)) {
+    stop(paste("File not found:", file))
+  }
+  
+  # Read the content of the Rd file
+  lines <- readLines(file)
+  
+  # Initialize variables
+  output <- c()
+  in_examples_section <- FALSE
+  in_arguments_section <- FALSE
+  in_author_section <- FALSE
+  current_argument <- NULL
+  argument_lines <- c()
+  
+  # Process each line of the file
+  for (line in lines) {
+    
+    # Skip lines starting with %
+    if (grepl("^%", line)) {
+      next
+    }
+    
+    # Check for \name{} section
+    if (grepl("^\\\\name\\{", line)) {
+      section_name <- sub("^\\\\name\\{([^}]*)\\}", "## \\1", line)
+      output <- c(output, section_name)
+      
+    } else if (grepl("^\\\\title\\{", line)) {
+      section_title <- sub("^\\\\title\\{([^}]*)\\}", "***\\1***", line)
+      output <- c(output, section_title, "\n")
+      
+    } else if (grepl("^\\\\usage\\{", line)) {
+      usage_section <- sub("^\\\\usage\\{", "**Usage:**\n", line)
+      output <- c(output, usage_section)
+      
+    } else if (grepl("^\\\\arguments\\{", line)) {
+      output <- c(output, "**Arguments:**\n")
+      in_arguments_section <- TRUE
+      
+    } else if (in_arguments_section && grepl("^\\\\item\\{", line)) {
+      if (!is.null(current_argument)) {
+        # Add the previous argument before starting a new one
+        output <- c(output, paste("- ", gsub("\\}", "", current_argument), paste(gsub("\\}", "", argument_lines), collapse = " ")))
+      }
+      # Start a new argument
+      current_argument <- sub("^\\\\item\\{([^}]*)\\}\\{", "\\1: ", line)
+      argument_lines <- c()
+      
+    } else if (in_arguments_section && !grepl("^\\\\item\\{", line) && line != "}") {
+      # Continue accumulating lines for the current argument
+      argument_lines <- c(argument_lines, line)
+      
+    } else if (in_arguments_section && line == "}") {
+      if (!is.null(current_argument)) {
+        # Add the last argument
+        output <- c(output, paste("- ", gsub("\\}", "", current_argument), paste(gsub("\\}", "", argument_lines), collapse = " ")))
+        current_argument <- NULL
+      }
+      output <- c(output, "\n")
+      in_arguments_section <- FALSE
+      
+    } else if (grepl("^\\\\value\\{", line)) {
+      value_section <- sub("^\\\\value\\{", "**Return:**", line)
+      output <- c(output, value_section)
+      
+    } else if (grepl("^\\\\description\\{", line)) {
+      description_section <- sub("^\\\\description\\{", "**Description:**", line)
+      output <- c(output, description_section)
+      
+    } else if (grepl("^\\\\examples\\{", line)) {
+      output <- c(output, "**Examples:**\n```r")
+      in_examples_section <- TRUE
+      
+    } else if (in_examples_section && line == "}") {
+      output <- c(output, "```")
+      in_examples_section <- FALSE
+      
+    } else if (in_examples_section) {
+      output <- c(output, line)
+      
+    } else if (grepl("^\\\\author\\{", line)) {
+      in_author_section <- TRUE
+      
+    } else if (in_author_section && line == "}") {
+      in_author_section <- FALSE
+      next # Skip the closing brace of the author section
+      
+    } else if (line == "}") {
+      output <- c(output, "")
+    } else if (!in_author_section) {
+      output <- c(output, line)
+    } else {
+      # Skip lines that do not match any defined section
+      next
+    }
+  }
+  
+  # Convert the processed lines to a single string with newlines
+  paste(output, collapse = "\n")
+}
+
+
+
+# List of Rd files to process
+rd_files <- list.files(path = "../man", pattern = "\\.Rd$", full.names = TRUE)
+
+# Read and process each Rd file
+for (file in rd_files) {
+  cat(process_rd(file), sep = "\n\n")
+}
+
+
+
+```
+
+

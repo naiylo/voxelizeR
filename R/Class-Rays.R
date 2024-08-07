@@ -113,7 +113,7 @@ setMethod("initialize", "Rays", function(.Object, ...) {
 #'
 #' @param .Object Object to check
 #'
-#' @name Check <- TODO
+#' @name Check
 
 setValidity("Rays", function(object) {
 
