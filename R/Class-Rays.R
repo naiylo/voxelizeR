@@ -70,8 +70,9 @@ setClass(
   package = "voxelizer"
 )
 
-#  TODO maybe the changeup makes a problem
 #' Initialize object ray
+#'
+#' @name Initialize (Rays)
 #'
 #' @author Benjamin Brede
 #'
@@ -109,11 +110,13 @@ setMethod("initialize", "Rays", function(.Object, ...) {
   return(.Object)
 })
 
-#' Check if Object inherits from LAS-class
+#' Check if Object is initialized accordingly and inherits from LAS-Class
+#'
+#' @name Check (Rays)
+#'
+#' @author Benjamin Brede
 #'
 #' @param .Object Object to check
-#'
-#' @name Check
 
 setValidity("Rays", function(object) {
 
@@ -135,6 +138,8 @@ setValidity("Rays", function(object) {
 })
 
 #' Show object Ray
+#'
+#' @name Show (Rays)
 #'
 #' @param object Ray to show
 #'
@@ -209,6 +214,8 @@ setMethod("show", "Rays", function(object) {
 })
 
 #' Combine Rays objects
+#'
+#' @name rbind.Rays
 #'
 #' @import dplyr
 #' @import lidR

@@ -101,6 +101,8 @@ setClass(
 
 #' Initialize object vox
 #'
+#' @name Initialize (Vox)
+#'
 #' @author Benjamin Brede
 #'
 #' @param .Object Object
@@ -132,13 +134,13 @@ setMethod("initialize", "Vox", function(.Object, crs = NA_crs_, ...) {
   return(.Object)
 })
 
-#' Check if vox is initilized accordingly
+#' Check if Object is initialized accordingly
+#'
+#' @name Check (Vox)
 #'
 #' @author Benjamin Brede
 #'
 #' @param .Object Object to check
-#'
-#' @name Check <- TODO
 
 setValidity("Vox", function(object) {
 
@@ -160,6 +162,8 @@ setValidity("Vox", function(object) {
 
 #' Show object Vox
 #'
+#' @name Show (Vox)
+#'
 #' @param object Vox to show
 #'
 #' @export
@@ -178,6 +182,8 @@ setMethod("show", "Vox", function(object) {
 })
 
 #' Function to display the first few rows of the voxel data contained in a vox object
+#'
+#' @name head.Vox
 #'
 #' @author Benjamin Brede
 #'

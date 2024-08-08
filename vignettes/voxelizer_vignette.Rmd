@@ -51,10 +51,10 @@ This section features documentation for every single function and class of the `
 library(tools)
 
 # Function to process Rd files and format them for a vignette
-process_rd <- function(file) {
-  # Check if file exists
-  if (!file.exists(file)) {
-    stop(paste("File not found:", file))
+process_rd <- function(file, skip_files = NULL) {
+  # Check if file exists and is not in the skip list
+  if (!file.exists(file) || basename(file) %in% skip_files) {
+    return(NULL)
   }
   
   # Read the content of the Rd file
@@ -155,14 +155,18 @@ process_rd <- function(file) {
   paste(output, collapse = "\n")
 }
 
-
-
 # List of Rd files to process
 rd_files <- list.files(path = "../man", pattern = "\\.Rd$", full.names = TRUE)
 
+# List of files to skip
+skip_files <- c("skip_file1.Rd", "skip_file2.Rd")  # Add the filenames you want to skip
+
 # Read and process each Rd file
 for (file in rd_files) {
-  cat(process_rd(file), sep = "\n\n")
+  processed_output <- process_rd(file, skip_files)
+  if (!is.null(processed_output)) {
+    cat(processed_output, sep = "\n\n")
+  }
 }
 
 
