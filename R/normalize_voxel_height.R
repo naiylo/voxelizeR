@@ -21,11 +21,11 @@ utils::globalVariables(c(
 #' @rdname normalize_voxel_height-methods
 #' @docType methods
 #'
-#' @param vox An object of class 'Vox' representing the voxel data.
-#' @param dem An object of class 'SpatRaster' representing the digital elevation model.
+#' @param vox An object of class Vox representing the voxel data.
+#' @param dem An object of class SpatRaster representing the digital elevation model.
 #' @param ... Additional arguments passed to other methods or functions.
 #'
-#' @return An object of class 'Vox' with normalized heights.
+#' @return An object of class Vox with normalized heights.
 #'
 #' @examples
 #' # Load required packages

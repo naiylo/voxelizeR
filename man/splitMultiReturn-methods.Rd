@@ -11,12 +11,12 @@ splitMultiReturn(rays, ...)
 \S4method{splitMultiReturn}{Rays}(rays)
 }
 \arguments{
-\item{rays}{An object of class 'Rays', which contains the point cloud data with multi-return pulses.}
+\item{rays}{An object of class Rays, which contains the point cloud data with multi-return pulses.}
 
 \item{...}{Additional arguments passed to other methods or functions.}
 }
 \value{
-An object of class 'Rays' with multi-return pulses split into single-return paths.
+An object of class Rays with multi-return pulses split into single-return paths.
 }
 \description{
 This function processes a point cloud with multi-return laser pulses, splitting each multi-return

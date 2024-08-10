@@ -13,7 +13,7 @@ prepare_tiles(aoi, res, tilesize, ...)
 
 \item{tilesize}{size of tiles}
 
-\item{...}{Additional arguments passed to other methods or functions e.g. crs: CRS for tiles as in \code{\link[sf]{st_as_sf}}}
+\item{...}{Additional arguments passed to other methods or functions e.g. crs: CRS for tiles as in st_as_sf}
 }
 \value{
 sf-object
@@ -25,7 +25,7 @@ and tile size, ensuring that the entire AOI is covered.
 }
 \note{
 The function assumes that the input AOI is in the same CRS as specified by the
-'crs' parameter.If the CRS does not match, the function may produce incorrect results.
+crs parameter.If the CRS does not match, the function may produce incorrect results.
 }
 \examples{
 library(sf)

@@ -9,14 +9,14 @@
 normalize_voxel_height(vox, dem, ...)
 }
 \arguments{
-\item{vox}{An object of class 'Vox' representing the voxel data.}
+\item{vox}{An object of class Vox representing the voxel data.}
 
-\item{dem}{An object of class 'SpatRaster' representing the digital elevation model.}
+\item{dem}{An object of class SpatRaster representing the digital elevation model.}
 
 \item{...}{Additional arguments passed to other methods or functions.}
 }
 \value{
-An object of class 'Vox' with normalized heights.
+An object of class Vox with normalized heights.
 }
 \description{
 This function normalizes the heights of voxels based on a digital elevation model (DEM).

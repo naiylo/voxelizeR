@@ -17,9 +17,9 @@ bin_int(x, res, origin = 0)
 An integer representing the binned coordinate value.
 }
 \description{
-This function takes a numeric value 'x', which represents a coordinate, and
-bins it to the nearest grid point based on the specified resolution 'res' and
-an optional origin point 'origin'. The result is then converted to an integer.
+This function takes a numeric value x, which represents a coordinate, and
+bins it to the nearest grid point based on the specified resolution res and
+an optional origin point origin. The result is then converted to an integer.
 }
 \examples{
 

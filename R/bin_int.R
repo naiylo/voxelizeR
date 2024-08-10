@@ -3,9 +3,9 @@
 #' @author Benjamin Brede
 #'
 #' @description
-#' This function takes a numeric value 'x', which represents a coordinate, and
-#' bins it to the nearest grid point based on the specified resolution 'res' and
-#' an optional origin point 'origin'. The result is then converted to an integer.
+#' This function takes a numeric value x, which represents a coordinate, and
+#' bins it to the nearest grid point based on the specified resolution res and
+#' an optional origin point origin. The result is then converted to an integer.
 #'
 #' @param x A numeric value representing the coordinate to be binned.
 #' @param res The resolution of the grid, which determines the spacing between grid points.

@@ -49,8 +49,6 @@ vox <- suppressWarnings(
 
 normalized_vox <- normalize_voxel_height(vox,dem)
 result <- vox2sds(normalized_vox)
-show(normalized_vox)
-show(result)
 
 test_that("vox2sds works correctly and transforms a vox to a SpatRasterDataset", {
   expect_true(inherits(result, "SpatRasterDataset"))

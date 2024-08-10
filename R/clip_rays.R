@@ -13,9 +13,9 @@ utils::globalVariables(c(
 #' @author Benjamin Brede
 #'
 #' @details
-#' Implementation of the Cohen-Sutherland algorithm: \url{https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm}
+#' Implementation of the Cohen-Sutherland algorithm: https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
 #'
-#' @param rays An object of class 'Rays'.
+#' @param rays An object of class Rays.
 #' @param aoi A numeric vector defining the area of interest with dimensions xmin, ymin, xmax, ymax.
 #' @param zrange A numeric vector defining the z-range with dimensions zmin, zmax.
 #' @param buffer numeric of length 3. Buffer to add around voi to avoid edge effects in other processing. Three dimensions as las. Same unit as las

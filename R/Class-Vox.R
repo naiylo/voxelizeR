@@ -6,7 +6,7 @@
 #' @author Benjamin Brede
 #'
 #' @description
-#' Class Vox is the representation of a 3D grid of regularly spaced volumes, typically produced by voxelization Rays object.
+#' Class Vox is the representation of a 3D grid of regularly spaced volumes, typically produced by voxelization of Rays object.
 #'
 #' @slot data Voxel data with XYZvoxel columns and attributes (depend on mode)
 #' @slot extent Voxel grid extent in vox crs. (xmin, ymin, zmin, ymin, ymax, zmax)
@@ -101,8 +101,6 @@ setClass(
 
 #' Initialize object vox
 #'
-#' @name Initialize (Vox)
-#'
 #' @author Benjamin Brede
 #'
 #' @param .Object Object
@@ -162,8 +160,6 @@ setValidity("Vox", function(object) {
 
 #' Show object Vox
 #'
-#' @name Show (Vox)
-#'
 #' @param object Vox to show
 #'
 #' @export
@@ -181,16 +177,15 @@ setMethod("show", "Vox", function(object) {
   return(invisible(object))
 })
 
-#' Function to display the first few rows of the voxel data contained in a vox object
+#' Display the First Few Rows of a Vox Object
 #'
-#' @name head.Vox
+#' @param x A Vox object.
+#' @param ... Additional arguments passed to the `head` function.
 #'
-#' @author Benjamin Brede
+#' @return A `data.frame` showing the first few rows of the voxel data.
 #'
-#' @param x a Vox object
-#' @param ... Additional arguments passed to the head function
-#'
-#' @return A `data.frame` showing the first few rows of the voxel data
+#' @method head Vox
+#' @rdname head.Vox
 #'
 #' @export
 

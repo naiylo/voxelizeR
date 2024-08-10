@@ -12,12 +12,12 @@
 #' @param aoi AOI that defines the voxelization region
 #' @param res numeric. Resolution for AOI as c(xres, yres)
 #' @param tilesize size of tiles
-#' @param ... Additional arguments passed to other methods or functions e.g. crs: CRS for tiles as in \code{\link[sf]{st_as_sf}}
+#' @param ... Additional arguments passed to other methods or functions e.g. crs: CRS for tiles as in st_as_sf
 #'
 #' @return sf-object
 #'
 #' @note The function assumes that the input AOI is in the same CRS as specified by the
-#' 'crs' parameter.If the CRS does not match, the function may produce incorrect results.
+#' crs parameter.If the CRS does not match, the function may produce incorrect results.
 #'
 #' @examples
 #' library(sf)

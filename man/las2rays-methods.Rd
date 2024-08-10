@@ -17,8 +17,8 @@ las2rays(las, traj, ...)
 \item{las}{A LAS object containing the LiDAR point cloud data.}
 
 \item{traj}{A data table or numeric vector representing the sensor trajectory.
-For a data table, it must contain the columns 'Xtraj', 'Ytraj',
-'Ztraj', and 'gpstime'. For a numeric vector, it represents the
+For a data table, it must contain the columns Xtraj, Ytraj,
+Ztraj, and gpstime. For a numeric vector, it represents the
 x, y, and z coordinates of the trajectory.}
 
 \item{...}{Additional arguments passed to other methods or functions.}

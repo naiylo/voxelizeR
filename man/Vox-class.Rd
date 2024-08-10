@@ -5,7 +5,7 @@
 \alias{Vox-class}
 \title{An S4 class to represent voxels}
 \description{
-Class Vox is the representation of a 3D grid of regularly spaced volumes, typically produced by voxelization Rays object.
+Class Vox is the representation of a 3D grid of regularly spaced volumes, typically produced by voxelization of Rays object.
 }
 \section{Slots}{
 

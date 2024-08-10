@@ -22,19 +22,19 @@ utils::globalVariables(c(
 #' It is designed to process LiDAR data for applications such as Leaf Area Density (LAD) estimation or occlusion mapping.
 #'
 #' @details
-#' The 'voxelize' function takes a `Rays` object, representing a point cloud with an added trajectory,
+#' The voxelize function takes a Rays object, representing a point cloud with an added trajectory,
 #' and a set of tiles that define the area to be processed. It then performs ray-tracing within the specified
-#' vertical boundaries (`zrange`) and at a given resolution (`res`). The function supports parallel processing
+#' vertical boundaries (zrange) and at a given resolution (res). The function supports parallel processing
 #' of tiles and allows for different processing orders to optimize performance.
 #'
 #' @param rays An object of class Rays (LAS with added trajectory)
-#' @param tiles sf. Tiles representing the area to be processed
-#' @param zrange numeric. Boundaries for volume of interest in vertical dimension c(zmin, zmax)
-#' @param res numeric. Resolution as single value for all three dimensions or as c(x, y, z)
-#' @param ac_single numeric. Attenuation coefficient of single vegetation element (\url{https://www.mdpi.com/2072-4292/10/10/1580})
-#' @param voxel_mode character. "LAD" for Leaf Area Density estimation with various estimators. "OCC" for occlusion mapping.
-#' @param process_tiles_parallel numeric. Numbers of tiles to process in parallel (only on *nix systems with \link{mclapply})
-#' @param process_order_tiles character. Processing order of tiles. "random" for randamized processing (typically balances processing of full and empty voxels). "seq" for sequential processing
+#' @param tiles Sf Tiles representing the area to be processed
+#' @param zrange Numeric boundaries for volume of interest in vertical dimension c(zmin, zmax)
+#' @param res Numeric resolution as single value for all three dimensions or as c(x, y, z)
+#' @param ac_single Numeric attenuation coefficient of single vegetation element https://www.mdpi.com/2072-4292/10/10/1580
+#' @param voxel_mode "LAD" for Leaf Area Density estimation with various estimators, or "OCC" for occlusion mapping.
+#' @param process_tiles_parallel Numbers of tiles to process in parallel (only on *nix systems with mclapply)
+#' @param process_order_tiles Processing order of tiles. "random" for randomized processing (typically balances processing of full and empty voxels). "seq" for sequential processing
 #' @param ... Additional arguments passed to other methods or functions.
 #'
 #' @return Vox object.

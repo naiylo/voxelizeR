@@ -2,21 +2,18 @@
 % Please edit documentation in R/Class-Vox.R
 \name{head.Vox}
 \alias{head.Vox}
-\title{Function to display the first few rows of the voxel data contained in a vox object}
+\title{Display the First Few Rows of a Vox Object}
 \usage{
 \method{head}{Vox}(x, ...)
 }
 \arguments{
-\item{x}{a Vox object}
+\item{x}{A Vox object.}
 
-\item{...}{Additional arguments passed to the head function}
+\item{...}{Additional arguments passed to the \code{head} function.}
 }
 \value{
-A \code{data.frame} showing the first few rows of the voxel data
+A \code{data.frame} showing the first few rows of the voxel data.
 }
 \description{
-Function to display the first few rows of the voxel data contained in a vox object
-}
-\author{
-Benjamin Brede
+Display the First Few Rows of a Vox Object
 }

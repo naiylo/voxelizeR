@@ -72,8 +72,6 @@ setClass(
 
 #' Initialize object ray
 #'
-#' @name Initialize (Rays)
-#'
 #' @author Benjamin Brede
 #'
 #' @param .Object Object
@@ -138,8 +136,6 @@ setValidity("Rays", function(object) {
 })
 
 #' Show object Ray
-#'
-#' @name Show (Rays)
 #'
 #' @param object Ray to show
 #'

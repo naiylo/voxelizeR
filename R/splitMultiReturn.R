@@ -20,10 +20,10 @@
 #' @docType methods
 #' @usage splitMultiReturn(rays, ...)
 #'
-#' @param rays An object of class 'Rays', which contains the point cloud data with multi-return pulses.
+#' @param rays An object of class Rays, which contains the point cloud data with multi-return pulses.
 #' @param ... Additional arguments passed to other methods or functions.
 #'
-#' @return An object of class 'Rays' with multi-return pulses split into single-return paths.
+#' @return An object of class Rays with multi-return pulses split into single-return paths.
 #'
 #' @examples
 #' # Load necessary libraries

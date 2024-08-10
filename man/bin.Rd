@@ -17,9 +17,9 @@ bin(x, res, origin = 0)
 The binned coordinate value, adjusted to the nearest grid point.
 }
 \description{
-This function takes a numeric value 'x', which represents a coordinate, and
-bins it to the nearest grid point based on the specified resolution 'res' and
-an optional origin point 'origin'.
+This function takes a numeric value x, which represents a coordinate, and
+bins it to the nearest grid point based on the specified resolution res and
+an optional origin point origin.
 }
 \examples{
 

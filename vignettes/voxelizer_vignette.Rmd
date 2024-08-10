@@ -18,18 +18,18 @@ vignette: >
 
 ## The voxelizeR Package
 
-The `voxelizeR` package offers advanced functionalities for voxelizing LiDAR point cloud data. By implementing sophisticated ray-tracing algorithms, it enables the computation of critical metrics such as Leaf Area Density (LAD) and facilitates occlusion mapping within specified spatial boundaries. This package is a collaborative development between the "Deutsche GeoForschungsZentrum" and the "University of Potsdam".
+The `voxelizeR` package offers advanced functionalities for voxelizing LiDAR point cloud data. By implementing sophisticated ray-tracing algorithms, it enables the computation of critical metrics such as Leaf Area Density (LAD) and facilitates occlusion mapping within specified spatial boundaries. This package is a collaborative development between the "Deutsche GeoForschungsZentrum" and the "University of Potsdam."
 
-This comprehensive guide aims to elucidate the primary features of the `voxelizeR` package and provide practical examples using the included sample datasets.
+This comprehensive guide aims to elucidate the primary features of the voxelizeR package and provide practical examples using the included sample datasets.
 
 ## Key Functionalities
 
 The `voxelizeR` package includes the following key functionalities:
 
--   **Voxelization of LiDAR Point Clouds**: Efficiently converts LiDAR point cloud data into a voxel-based representation.
--   **Ray-Tracing Algorithms**: Implements advanced ray-tracing techniques to calculate metrics such as Leaf Area Density (LAD).
--   **Occlusion Mapping**: Performs occlusion mapping to analyze visibility and coverage within defined spatial boundaries.
--   **Integration with R**: Seamlessly integrates with the R programming environment, allowing for easy manipulation and analysis of voxelized data.
+-   **Voxelization of LiDAR Point Clouds:** Efficiently converts LiDAR point cloud data into a voxel-based representation.
+-   **Ray-Tracing Algorithms:** Implements advanced ray-tracing techniques to calculate metrics such as Leaf Area Density (LAD).
+-   **Occlusion Mapping:** Performs occlusion mapping to analyze visibility and coverage within defined spatial boundaries.
+-   **Integration with R:** Seamlessly integrates with the R programming environment, allowing for easy manipulation and analysis of voxelized data.
 
 # Installation
 
@@ -39,9 +39,31 @@ To install the development version of `voxelizeR` from GitHub, you can use the `
 install.packages("devtools")
 devtools::install_github("naiylo/voxelizeR")
 ```
+
+# Functions
+
+The `voxelizeR` package is equipped with a variety of functions that provide users with the tools necessary to perform voxelization, ray-tracing, and occlusion mapping on LiDAR point cloud data. Each function is designed to integrate seamlessly with the R environment, making it easy to incorporate these advanced processes into your existing workflows.
+
+In this section, you will find a detailed overview of each function included in the `voxelizeR` package. For every function, we provide the following information:
+
+-   **Function Name and Purpose:** A brief description of the function and its intended use.
+-   **Parameters:** A list of arguments that the function accepts, along with a description of each parameter and its expected input.
+-   **Return Value:** A description of the output produced by the function.
+-   **Usage Example:** A concise example that demonstrates how to use the function in practice.
+
+This structured approach ensures that you can quickly find the information you need and apply it to your data analysis tasks.
+
+# Example
+
+The `voxelizeR` package is designed to be intuitive and user-friendly, but to help you get started, we’ve included a series of practical examples. These examples showcase how to use the package’s functions in real-world scenarios. For further examples of specific functions make sure to visit our Documentation section.
+
 # Documentation
 
-This section features documentation for every single function and class of the `voxelizeR` package. Each documentation includes an explanation of the different parameters and a small example of how to use them. This documentation section is automatically generated from the `roxygen2` comments in each function. (For further documentation, make sure to visit the Functions section of this vignette.)
+This section provides documentation for every function and class available in the `voxelizeR` package. Each entry includes an explanation of the different parameters and a small example of how to use the function or class.
+
+The documentation in this section is auto-generated from the `roxygen2` comments embedded within the source code of the package. For detailed information and additional examples, you should refer to the specific documentation of each function or class.
+
+To explore the full documentation, including detailed descriptions and advanced usage examples, please visit the "Functions" section of this vignette, or consult the documentation files directly within the package.
 
 <!-- This is the code to automatically load the documentation out of the roxygen2 comment section of each R-script -->
 
@@ -51,7 +73,7 @@ This section features documentation for every single function and class of the `
 library(tools)
 
 # Function to process Rd files and format them for a vignette
-process_rd <- function(file, skip_files = NULL) {
+process_rd <- function(file, skip_files = NULL, skip_patterns = NULL) {
   # Check if file exists and is not in the skip list
   if (!file.exists(file) || basename(file) %in% skip_files) {
     return(NULL)
@@ -62,17 +84,20 @@ process_rd <- function(file, skip_files = NULL) {
   
   # Initialize variables
   output <- c()
-  in_examples_section <- FALSE
   in_arguments_section <- FALSE
+  in_slots_section <- FALSE
   in_author_section <- FALSE
+  in_examples_section <- FALSE
   current_argument <- NULL
+  current_slot <- NULL
   argument_lines <- c()
+  slot_lines <- c()
   
   # Process each line of the file
   for (line in lines) {
     
-    # Skip lines starting with %
-    if (grepl("^%", line)) {
+    # Skip lines that match any pattern in skip_patterns
+    if (any(sapply(skip_patterns, function(pattern) grepl(pattern, line)))) {
       next
     }
     
@@ -86,11 +111,11 @@ process_rd <- function(file, skip_files = NULL) {
       output <- c(output, section_title, "\n")
       
     } else if (grepl("^\\\\usage\\{", line)) {
-      usage_section <- sub("^\\\\usage\\{", "**Usage:**\n", line)
+      usage_section <- sub("^\\\\usage\\{", "**Usage:**", line)
       output <- c(output, usage_section)
       
     } else if (grepl("^\\\\arguments\\{", line)) {
-      output <- c(output, "**Arguments:**\n")
+      output <- c(output, "**Parameters:**\n")
       in_arguments_section <- TRUE
       
     } else if (in_arguments_section && grepl("^\\\\item\\{", line)) {
@@ -99,7 +124,7 @@ process_rd <- function(file, skip_files = NULL) {
         output <- c(output, paste("- ", gsub("\\}", "", current_argument), paste(gsub("\\}", "", argument_lines), collapse = " ")))
       }
       # Start a new argument
-      current_argument <- sub("^\\\\item\\{([^}]*)\\}\\{", "\\1: ", line)
+      current_argument <- sub("^\\\\item\\{([^}]*)\\}\\{", "**\\1:** ", line)
       argument_lines <- c()
       
     } else if (in_arguments_section && !grepl("^\\\\item\\{", line) && line != "}") {
@@ -123,8 +148,12 @@ process_rd <- function(file, skip_files = NULL) {
       description_section <- sub("^\\\\description\\{", "**Description:**", line)
       output <- c(output, description_section)
       
+    } else if (grepl("^\\\\details\\{", line)) {
+      details_section <- sub("^\\\\details\\{", "**Details:**", line)
+      output <- c(output, details_section)
+      
     } else if (grepl("^\\\\examples\\{", line)) {
-      output <- c(output, "**Examples:**\n```r")
+      output <- c(output, "\n**Examples:**\n```r")
       in_examples_section <- TRUE
       
     } else if (in_examples_section && line == "}") {
@@ -140,6 +169,32 @@ process_rd <- function(file, skip_files = NULL) {
     } else if (in_author_section && line == "}") {
       in_author_section <- FALSE
       next # Skip the closing brace of the author section
+      
+    } else if (grepl("^\\\\section\\{Slots\\}", line)) {
+      output <- c(output, "\n**Attributes:\n**")
+      in_slots_section <- TRUE
+      
+    } else if (in_slots_section && grepl("^\\\\item\\{\\code\\{", line)) {
+      if (!is.null(current_slot)) {
+        # Add the previous slot before starting a new one
+        output <- c(output, paste("- ", gsub("\\}\\}", "", current_slot), paste(gsub("\\}", "", slot_lines), collapse = " ")))
+      }
+      # Start a new slot
+      current_slot <- sub("^\\\\item\\{\\code\\{([^}]*)\\}\\}\\{", "**\\1:** ", line)
+      slot_lines <- c()
+      
+    } else if (in_slots_section && !grepl("^\\\\item\\{", line) && line != "}") {
+      # Continue accumulating lines for the current slot
+      slot_lines <- c(slot_lines, line)
+      
+    } else if (in_slots_section && (line == "}" || line == "}}")) {
+      if (!is.null(current_slot)) {
+        # Add the last slot
+        output <- c(output, paste("- ", gsub("\\}\\}\\{", "", current_slot), paste(gsub("\\}", "", slot_lines), collapse = " ")))
+        current_slot <- NULL
+      }
+      output <- c(output, "\n")
+      in_slots_section <- FALSE
       
     } else if (line == "}") {
       output <- c(output, "")
@@ -159,16 +214,32 @@ process_rd <- function(file, skip_files = NULL) {
 rd_files <- list.files(path = "../man", pattern = "\\.Rd$", full.names = TRUE)
 
 # List of files to skip
-skip_files <- c("skip_file1.Rd", "skip_file2.Rd")  # Add the filenames you want to skip
+skip_files <- c("clip_rays-Rays-numeric-numeric-numeric-method.Rd", 
+                "clip_rays-Rays-sf-numeric-numeric-method.Rd",
+                "show-Rays-method.Rd",
+                "show-Vox-method.Rd",
+                "initialize-Rays-method.Rd",
+                "initialize-Vox-method.Rd",
+                "Check-open-paren-Rays-close-paren.Rd",
+                "Check-open-paren-Vox-close-paren.Rd",
+                "pipe.Rd",
+                "voxelize-Rays-sf-method.Rd")  
+
+# List of patterns to skip
+skip_patterns <- c("^%", "^\\\\S4method\\{", 
+                   "^\\\\seealso\\{", 
+                   "^\\\\note\\{",
+                   "^\\\\describe\\{",
+                   "^\\\\item\\{\\{\\code",
+                   "^\\\\item\\{\\code\\{[^}]+\\}\\}\\{")  # Add other patterns to skip
 
 # Read and process each Rd file
 for (file in rd_files) {
-  processed_output <- process_rd(file, skip_files)
+  processed_output <- process_rd(file, skip_files, skip_patterns)
   if (!is.null(processed_output)) {
     cat(processed_output, sep = "\n\n")
   }
 }
-
 
 
 ```

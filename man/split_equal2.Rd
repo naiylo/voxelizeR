@@ -17,6 +17,20 @@ list with parts of the vector
 \description{
 This function divides a vector 'x' into groups of length 'l'.
 }
+\examples{
+# Example 1: Split vector into groups of length 3
+split_equal2(1:10, 3)
+
+# Example 2: Split vector into groups of length 5
+split_equal2(1:10, 5)
+
+# Example 3: Split vector into groups of length greater than the vector length
+split_equal2(1:10, 20)
+
+# Example 4: Split an empty vector into groups of length 3 (returns an empty list)
+split_equal2(integer(0), 3)
+
+}
 \author{
 Benjamin Brede
 }

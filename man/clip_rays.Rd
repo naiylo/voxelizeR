@@ -7,7 +7,7 @@
 clip_rays(rays, aoi, zrange, buffer, ...)
 }
 \arguments{
-\item{rays}{An object of class 'Rays'.}
+\item{rays}{An object of class Rays.}
 
 \item{aoi}{A numeric vector defining the area of interest with dimensions xmin, ymin, xmax, ymax.}
 
@@ -24,7 +24,7 @@ An object of class 'Rays' that has been clipped according to the specified param
 Fast clipping of rays according to voi
 }
 \details{
-Implementation of the Cohen-Sutherland algorithm: \url{https://en.wikipedia.org/wiki/Cohen\%E2\%80\%93Sutherland_algorithm}
+Implementation of the Cohen-Sutherland algorithm: https://en.wikipedia.org/wiki/Cohen\%E2\%80\%93Sutherland_algorithm
 }
 \examples{
 # Load required packages
