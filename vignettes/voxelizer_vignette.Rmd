@@ -31,6 +31,7 @@ The `voxelizeR` package includes the following key functionalities:
 -   **Occlusion Mapping:** Performs occlusion mapping to analyze visibility and coverage within defined spatial boundaries.
 -   **Integration with R:** Seamlessly integrates with the R programming environment, allowing for easy manipulation and analysis of voxelized data.
 
+\newpage
 # Installation
 
 To install the development version of `voxelizeR` from GitHub, you can use the `devtools` package. Follow these steps:
@@ -39,7 +40,7 @@ To install the development version of `voxelizeR` from GitHub, you can use the `
 install.packages("devtools")
 devtools::install_github("naiylo/voxelizeR")
 ```
-
+\newpage
 # Functions
 
 The `voxelizeR` package is equipped with a variety of functions that provide users with the tools necessary to perform voxelization, ray-tracing, and occlusion mapping on LiDAR point cloud data. Each function is designed to integrate seamlessly with the R environment, making it easy to incorporate these advanced processes into your existing workflows.
@@ -53,10 +54,103 @@ In this section, you will find a detailed overview of each function included in 
 
 This structured approach ensures that you can quickly find the information you need and apply it to your data analysis tasks.
 
+\newpage
 # Example
 
-The `voxelizeR` package is designed to be intuitive and user-friendly, but to help you get started, we’ve included a series of practical examples. These examples showcase how to use the package’s functions in real-world scenarios. For further examples of specific functions make sure to visit our Documentation section.
+The `voxelizeR` package is designed to be intuitive and user-friendly, offering a streamlined experience for users of all levels. To help you get started, we’ve included a series of practical examples that demonstrate the package's functionality in real-world scenarios. These examples will guide you through the core processes, showcasing how to apply `voxelizeR` to achieve meaningful results. For more detailed instructions and examples specific to individual functions, please refer to the Documentation section.
 
+## Getting Started with voxelizeR
+
+Before diving into the examples, you’ll need some data to work with. Fortunately, `voxelizeR` comes with a set of mock data that you can use to familiarize yourself with the package's features. This mock data is conveniently located in the `./inst/extdata` directory of the package.
+
+The functions within `voxelizeR` are designed to work with `.laz` and `.traj` files, which are common formats for point cloud and trajectory data, respectively. Additionally, for normalization processes, a Digital Elevation Model (DEM) file of the relevant area is required.
+
+### Example: Loading and Preparing Data
+
+To start, let's load a sample `.laz` file and a corresponding DEM file. This data will be used to demonstrate how to voxelize a point cloud and perform basic analyses.
+
+``` r
+# Load required packages
+library(voxelizeR)
+library(lidR)
+library(pracma)
+library(dplyr)
+library(data.table)
+library(sf)
+
+# Define the paths to the sample data
+data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizeR")
+traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizeR")
+
+# Read in LAS data
+las <- readLAS(data_file)
+
+# Ensure the CRS of the LAS object
+epsg(las) <- 32631
+
+# Create a trajectory for the LAS object
+colnames <- c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')
+traj <- fread(traj_file, col.names = colnames) %>%
+  select(gpstime, Xorigin, Yorigin, Zorigin) %>%
+  rename(Xtraj = Xorigin,
+         Ytraj = Yorigin,
+         Ztraj = Zorigin) %>%
+  mutate(gpstime = as.numeric(gpstime),
+         Xtraj = as.numeric(Xtraj),
+         Ytraj = as.numeric(Ytraj),
+         Ztraj = as.numeric(Ztraj))
+```
+
+### Voxelization of Point Cloud Data
+
+Now that we have our data loaded, we can proceed to voxelize the point cloud using the `voxelize` function. Voxelization is a process that divides a 3D space into a grid of cubes (voxels) and determines which points from the cloud fall within each voxel.
+
+``` r
+# Create a subset of the LAS data
+laz <- las[1:10,]
+
+# Compute rays from LAS points and trajectory
+rays <- las2rays(laz, traj)
+
+# Prepare tiles for voxelization
+tiles <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
+                       res = c(x = 1, y = 1),
+                       tilesize = c(20, 20),
+                       crs = 32631)
+
+# Define the area of interest (AOI) based on tiles
+aoi <- st_bbox(tiles) %>%
+  as.numeric() %>%
+  setNames(names(st_bbox(tiles)))
+
+# Define the z-range for voxelization
+zrange <- c(50, 55) %>%
+  setNames(c("zmin", "zmax"))
+
+# Define the voxel resolution
+res <- c(x = 1, y = 1, z = 1)
+
+# Perform voxelization
+vox <- voxelize(
+  rays = rays,
+  tiles = tiles,
+  zrange = zrange,
+  res = res,
+  ac_single = 0.001,
+  voxel_mode = "OCC",
+  process_tiles_parallel = 1,
+  process_order_tiles = "random"
+)
+
+# Visualize the voxelized data
+plot(vox)
+```
+
+## Further Exploration
+
+These examples provide a basic overview of what you can achieve with `voxelizeR.` To explore additional functionalities, such as advanced filtering, data export, or integrating multiple datasets, we encourage you to visit the Documentation section. There, you will find more comprehensive examples, along with detailed descriptions of each function’s parameters and outputs.
+
+\newpage
 # Documentation
 
 This section provides documentation for every function and class available in the `voxelizeR` package. Each entry includes an explanation of the different parameters and a small example of how to use the function or class.

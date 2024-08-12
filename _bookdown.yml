@@ -4,7 +4,8 @@ output_dir: "docs"
 new_session: yes
 
 bookdown::gitbook:
-  split_by: chapter+number
+  bookdown::gitbook:
+    split_by: chapter+number  # Splits by chapter
   config:
     toc:
       collapse: section
@@ -14,7 +15,7 @@ bookdown::gitbook:
     number_sections: true # Enable numbering for all sections
     section_numbering:
       level_1: true   # Enable numbering for top-level headers
-      level_2: true   # Enable numbering for second-level headers
+      level_2: false   # Enable numbering for second-level headers
       level_3: false  # Disable numbering for third-level headers
       level_4: false  # Disable numbering for fourth-level headers
 
