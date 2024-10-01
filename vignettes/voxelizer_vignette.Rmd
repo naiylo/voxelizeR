@@ -65,7 +65,7 @@ Before diving into the examples, you’ll need some data to work with. Fortunate
 
 The functions within `voxelizeR` are designed to work with `.laz` and `.traj` files, which are common formats for point cloud and trajectory data, respectively. Additionally, for normalization processes, a Digital Elevation Model (DEM) file of the relevant area is required.
 
-### Example: Loading and Preparing Data
+### Loading and Preparing Data
 
 To start, let's load a sample `.laz` file and a corresponding DEM file. This data will be used to demonstrate how to voxelize a point cloud and perform basic analyses.
 
@@ -148,6 +148,8 @@ vox <- voxelize(
   process_order_tiles = "random"
 )
 ```
+### Visualizing the result
+
 Once the voxelization process is complete, we can visualize the voxelized point cloud data directly within the R Markdown document.
 ``` r
 # Plot voxelized data
