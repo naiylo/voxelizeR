@@ -77,8 +77,12 @@ library(pracma)
 library(dplyr)
 library(data.table)
 library(sf)
+```
 
-# Define the paths to the sample data
+First, define the paths to the data (in our example the `.laz`and `.traj` file), and read the data into R. Ensure the Coordinate Reference System (CRS) is set correctly for the LAS object.
+
+``` r
+# Define paths to sample data
 data_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.laz", package = "voxelizeR")
 traj_file <- system.file("extdata", "H7_LS_F2_H20_200901-120129.traj", package = "voxelizeR")
 
@@ -87,8 +91,10 @@ las <- readLAS(data_file)
 
 # Ensure the CRS of the LAS object
 epsg(las) <- 32631
-
-# Create a trajectory for the LAS object
+```
+Next, create a trajectory for the LAS object by reading the .traj file and renaming relevant columns. The trajectory data will be used to compute rays between the point cloud data and the trajectory.
+``` r
+# Read and format trajectory data
 colnames <- c('gpstime', 'roll', 'pitch', 'yaw', 'Xorigin', 'Yorigin', 'Zorigin')
 traj <- fread(traj_file, col.names = colnames) %>%
   select(gpstime, Xorigin, Yorigin, Zorigin) %>%
@@ -103,16 +109,16 @@ traj <- fread(traj_file, col.names = colnames) %>%
 
 ### Voxelization of Point Cloud Data
 
-Now that we have our data loaded, we can proceed to voxelize the point cloud using the `voxelize` function. Voxelization is a process that divides a 3D space into a grid of cubes (voxels) and determines which points from the cloud fall within each voxel.
+Voxelization is the process of converting the 3D space into a grid of cubes `voxels`, where each cube contains point cloud data. In this example, we will perform voxelization on a subset of the LAS data.
 
 ``` r
 # Create a subset of the LAS data
 laz <- las[1:10,]
 
-# Compute rays from LAS points and trajectory
+# Compute rays from LAS points to the trajectory
 rays <- las2rays(laz, traj)
 
-# Prepare tiles for voxelization
+# Prepare tiles for voxelization, based on a defined area of interest (AOI)
 tiles <- prepare_tiles(c(xmin = 682130, ymin = 5763580, xmax = 682300, ymax = 5763680),
                        res = c(x = 1, y = 1),
                        tilesize = c(20, 20),
@@ -141,8 +147,10 @@ vox <- voxelize(
   process_tiles_parallel = 1,
   process_order_tiles = "random"
 )
-
-# Visualize the voxelized data
+```
+Once the voxelization process is complete, we can visualize the voxelized point cloud data directly within the R Markdown document.
+``` r
+# Plot voxelized data
 plot(vox)
 ```
 
