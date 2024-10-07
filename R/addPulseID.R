@@ -33,6 +33,11 @@ addPulseID = function(las, ...) UseMethod("addPulseID")
 
 addPulseID.LAS <- function(las, ...) {
 
+  # Check if the las object is valid
+  if (!inherits(las, "LAS")) {
+    stop("The input 'las' must be an object of class 'LAS'.")
+  }
+
   # Check if LAS object is empty
   if (npoints(las) == 0) {
     las@data$pulseID <- integer(0)

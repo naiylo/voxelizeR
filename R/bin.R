@@ -50,6 +50,23 @@
 
 bin <- function(x, res, origin = 0) {
 
+  # Check that 'res' is a positive, non-zero numeric value
+  if (!is.numeric(res)) {
+    stop("The resolution 'res' must be a numeric value.")
+  }
+  if (res <= 0) {
+    stop("Resolution 'res' must be a positive, non-zero value.")
+  }
+
+  # Check that 'x' and 'origin' are numeric
+  if (!is.numeric(x)) {
+    stop("The coordinate 'x' must be a numeric value.")
+  }
+
+  if (!is.numeric(origin)) {
+    stop("The origin 'origin' must be a numeric value.")
+  }
+
   floor(0.5 + (x - origin) / res) * res + origin
 
 }

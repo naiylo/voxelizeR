@@ -50,6 +50,19 @@
 
 bin_int <- function(x, res, origin = 0) {
 
+  # Check if res is a positive, non-zero value
+  if (res <= 0) {
+    stop("Resolution 'res' must be a positive, non-zero value.")
+  }
+
+  # Check if the values are numeric
+  if (!is.numeric(x)) {
+    stop("The coordinate 'x' must be a numeric value.")
+  }
+  if (!is.numeric(res)) {
+    stop("The resolution 'res' must be a numeric value.")
+  }
+
   as.integer(floor(0.5 + (x - origin) / res))
 
 }

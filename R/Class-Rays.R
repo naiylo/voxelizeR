@@ -97,6 +97,12 @@ setMethod("initialize", "Rays", function(.Object, ...) {
 
   # Set the header information
   header <- lidR::LASheader()
+
+  # Check if header initialization succeeds and matches the required fields
+  if (!is(header, "LASheader")) {
+    stop("Error initializing LAS header.")
+  }
+
   header@PHB[["Global Encoding"]][["WKT"]] <- TRUE
   header@PHB[["Version Minor"]] <- 4L
   header@PHB[["Point Data Format ID"]] <- 6L
@@ -122,16 +128,18 @@ setValidity("Rays", function(object) {
   # names of columns in pc necessary for processing
   ray_col <- c(paste0(dims, "traj"), paste0(dims, "origin"), "XYZisHit", "IsOccluded")
 
+  # Check for missing columns in the Rays object
   missing_columns <- ray_col[sapply(ray_col, function(col) !col %in% names(object@data))]
-
   if (length(missing_columns) != 0) {
-    paste('rays misses columns:', missing_columns, collapse = ',')
-  } else if (!is(object, "LAS")) {
-    "Object does not inherit from LAS-class"
-  } else {
-    "Object does inherit from LAS-class"
-    TRUE
+    return(paste("Rays object is missing columns:", paste(missing_columns, collapse = ', ')))
   }
+
+  # Ensure that the object inherits from LAS
+  if (!is(object, "LAS")) {
+    return("The object does not inherit from LAS class.")
+  }
+
+  return(TRUE)
 
 })
 
@@ -224,8 +232,14 @@ setMethod("show", "Rays", function(object) {
 #' @export
 
 rbind.Rays <- function(...) {
-  #TODO here was a change for CRAN find out if it courses any problems -> one solution completly copy the rbind method in this package
+
   rays <- utils::getFromNamespace("rbind.LAS", "lidR")(...)
+
+  # Ensure that the objects being combined are valid Rays objects
+  if (!inherits(rays, "LAS")) {
+    stop("The combined object must inherit from LAS.")
+  }
+
   class(rays) <- "Rays"
 
   return(rays)
