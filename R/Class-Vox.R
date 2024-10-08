@@ -115,14 +115,24 @@ setMethod("initialize", "Vox", function(.Object, crs = NA_crs_, ...) {
 
   dims <- c("x", "y", "z")
 
+  # Check that CRS is valid
+  if (!inherits(crs, "crs") && !inherits(crs, "CRS") && !is(crs, "numeric") && !is.na(crs)) {
+    stop("Invalid CRS provided. CRS must be of type sf::crs, numeric, or NA.")
+  }
+
   .Object@data <- data.frame(Xvoxel = numeric(),
                              Yvoxel = numeric(),
                              Zvoxel = numeric())
 
+  # Extent initialization
   .Object@extent <- c(0, 0, 0, 1, 1, 1)
   names(.Object@extent) <- c(paste0(dims, "min"), paste0(dims, "max"))
 
+  # Ensure resolution is a valid length 3 vector
   .Object@resolution <- c(1, 1, 1)
+  if (length(.Object@resolution) != 3) {
+    stop("Resolution must have exactly 3 elements (x, y, z).")
+  }
   names(.Object@resolution) <- dims
 
   .Object@mode <- "LAD"

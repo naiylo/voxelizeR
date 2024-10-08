@@ -205,6 +205,7 @@ setMethod("clip_rays",
 #' @noRd
 
 clip_rays_df <- function(pc, voi, buffer = rep(0, 3)) {
+
   # Ensure 'pc' has the required columns
   required_columns <- c("X", "Y", "Z", "Xorigin", "Yorigin", "Zorigin")
   missing_columns <- setdiff(required_columns, names(pc))

@@ -71,6 +71,11 @@ setMethod("las2rays",
           signature = c("LAS", "data.table"),
           definition = function(las, traj) {
 
+            # Check that las is a valid LAS object
+            if (!inherits(las, "LAS")) {
+              stop("The 'las' argument must be a LAS object.")
+            }
+
             if (!all(sapply(c("Xtraj", "Ytraj", "Ztraj", "gpstime"), function(c) c %in% names(traj))))
               stop("trajectory misses columns!")
 
@@ -111,6 +116,21 @@ setMethod("las2rays",
 setMethod("las2rays",
           signature = c("LAS", "numeric"),
           definition = function(las, traj) {
+
+            # Check that las is a valid LAS object
+            if (!inherits(las, "LAS")) {
+              stop("The 'las' argument must be a LAS object.")
+            }
+
+            # Check that traj is a numeric vector of length 3
+            if (!is.numeric(traj) || length(traj) != 3) {
+              stop("The 'traj' argument must be a numeric vector of length 3 representing X, Y, Z coordinates.")
+            }
+
+            # Check CRS of the LAS object (if applicable)
+            if (is.null(sf::st_crs(las))) {
+              stop("The CRS (Coordinate Reference System) of the LAS object is not defined.")
+            }
 
             xtraj <- traj[1]
             ytraj <- traj[2]

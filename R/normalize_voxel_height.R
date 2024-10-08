@@ -107,14 +107,28 @@ utils::globalVariables(c(
 
 normalize_voxel_height <- function(vox, dem, ...) {
 
+  # Input validation
   if (!inherits(vox, "Vox")) {
-    stop("Input 'vox' must be an object of class 'Vox'")
-  }
-  if (!inherits(dem, "SpatRaster")) {
-    stop("Input 'dem' must be an object of class 'SpatRaster'")
+    stop("Error: Input 'vox' must be an object of class 'Vox'.")
   }
 
-  ## resample dem to Vox resolution and extent
+  if (!inherits(dem, "SpatRaster")) {
+    stop("Error: Input 'dem' must be an object of class 'SpatRaster'.")
+  }
+
+  if (ncell(dem) == 0) {
+    stop("Error: The DEM input contains no data.")
+  }
+
+  if (length(vox@data) == 0) {
+    stop("Error: The Voxel data is empty.")
+  }
+
+  if (any(is.na(c(vox@extent, vox@resolution)))) {
+    stop("Error: The Voxel data contains invalid extent or resolution values.")
+  }
+
+  # Resample DEM to match Vox resolution and extent
   tmpl <- rast(xmin = vox@extent["xmin"], ymin = vox@extent["ymin"],
                xmax = vox@extent["xmax"], ymax = vox@extent["ymax"],
                resolution = vox@resolution[c("x", "y")],
@@ -122,21 +136,25 @@ normalize_voxel_height <- function(vox, dem, ...) {
 
   dem_resample <- resample(dem, tmpl, method = "bilinear")
 
-  # dem as data.frame
-  dem_df <- as.data.frame(crds(dem_resample)) %>%
-    rename(Xvoxel = x,
-           Yvoxel = y) %>%
-    mutate(Xvoxel = bin_int(Xvoxel, res = vox@resolution["x"], origin = vox@extent["xmin"]) - 1,
-           Yvoxel = bin_int(Yvoxel, res = vox@resolution["y"], origin = vox@extent["ymin"]) - 1,
-           DEMheight = bin_int(as.data.frame(dem_resample)[,1], res = vox@resolution["z"], origin = vox@extent["zmin"]))
+  # Convert DEM resampled raster to data frame
+  dem_df <- tryCatch({
+    as.data.frame(crds(dem_resample)) %>%
+      rename(Xvoxel = x, Yvoxel = y) %>%
+      mutate(Xvoxel = bin_int(Xvoxel, res = vox@resolution["x"], origin = vox@extent["xmin"]) - 1,
+             Yvoxel = bin_int(Yvoxel, res = vox@resolution["y"], origin = vox@extent["ymin"]) - 1,
+             DEMheight = bin_int(as.data.frame(dem_resample)[,1], res = vox@resolution["z"], origin = vox@extent["zmin"]))
+  }, error = function(e) {
+    stop("Error during DEM data frame creation: ", e$message)
+  })
 
+  # Join DEM data with voxel data
   vox@data <- vox@data %>%
     inner_join(dem_df, by = c('Xvoxel', 'Yvoxel'), relationship = "many-to-many") %>%
     mutate(Zvoxel = Zvoxel - DEMheight)
 
+  # Update voxel extent and height normalization flag
   vox@extent["zmin"] <- 0
   vox@extent["zmax"] <- max(vox@data$Zvoxel, na.rm = TRUE) * vox@resolution["z"]
-
   vox@height_normalized <- TRUE
 
   vox
