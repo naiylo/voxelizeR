@@ -71,10 +71,6 @@ setMethod("splitMultiReturn",
               stop("Error: Input must be of class 'Rays'.")
             }
 
-            if (!"data" %in% slotNames(rays)) {
-              stop("Error: The input object does not contain the required 'data' slot.")
-            }
-
             if (!all(c('Xtraj', 'Ytraj', 'Ztraj', 'NumberOfReturns', 'ReturnNumber', 'gpstime') %in% names(rays@data))) {
               stop("Error: The 'data' slot must contain the necessary columns: 'Xtraj', 'Ytraj', 'Ztraj', 'NumberOfReturns', 'ReturnNumber', 'gpstime'.")
             }
