@@ -28,7 +28,7 @@ test_that("Permuted vector contains the same elements as the original", {
 
 test_that("Permuting an empty vector returns an empty vector", {
   x <- numeric(0)
-  permuted_x <- permute(x)
+  permuted_x <- suppressWarnings(permute(x))
 
   expect_equal(permuted_x, x,
                info = "Permuting an empty vector should return an empty vector.")
@@ -36,7 +36,7 @@ test_that("Permuting an empty vector returns an empty vector", {
 
 test_that("Permuting a single-element vector returns the same vector", {
   x <- c(42)
-  permuted_x <- permute(x)
+  permuted_x <- suppressWarnings(permute(x))
 
   expect_equal(permuted_x, x,
                info = "Permuting a single-element vector should return the same vector.")

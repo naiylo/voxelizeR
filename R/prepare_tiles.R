@@ -62,12 +62,17 @@ prepare_tiles.sfc <- function(aoi,
                               res = c(x = 1, y = 1),
                               tilesize = c(10, 10), ...) {
 
+  # Validate CRS
+  if (is.null(st_crs(aoi))) {
+    stop("Error: The AOI must have a defined CRS.")
+  }
+
   bb <- st_bbox(aoi)
   xymin <- floor(bb[c("xmin", "ymin")] / res) * res
   tilen <- ceiling((bb[c("xmax", "ymax")] - xymin) / tilesize)
   xymax <- xymin + tilen * tilesize
 
-  # extended bb
+  # Extended bounding box
   bb_ext <- st_polygon(list(matrix(ncol = 2, byrow = TRUE,
                                    c(xymin[1], xymin[2],
                                      xymax[1], xymin[2],
@@ -76,11 +81,15 @@ prepare_tiles.sfc <- function(aoi,
                                      xymin[1], xymin[2])))) %>%
     st_sfc(crs = st_crs(aoi))
 
+  # Create grid of tiles
+  grid <- st_make_grid(bb_ext, n = tilen)
 
-  # g[aoi] selects cells that intersect with aoi
-  # only select intersecting
-  st_make_grid(bb_ext, n = tilen)[aoi] %>%
-    st_sf()
+  if (is.null(grid)) {
+    stop("Error: Failed to create a grid of tiles. Please check the inputs.")
+  }
+
+  # Select tiles that intersect with AOI
+  st_sf(geometry = grid[aoi])
 }
 
 #' @export
@@ -94,12 +103,34 @@ prepare_tiles.sf <- function(aoi,
 }
 
 #' @export
+prepare_tiles.bbox <- function(aoi,
+                               res = c(x = 1, y = 1),
+                               tilesize = c(10, 10),
+                               crs, ...) {
+
+  if (missing(crs)) {
+    stop("Error: CRS must be provided for bbox input.")
+  }
+
+  # Convert bbox to sfc with CRS
+  st_as_sfc(aoi) %>%
+    st_geometry() %>%
+    st_sfc(crs = crs) %>%
+    prepare_tiles(res = res, tilesize = tilesize)
+}
+
+#' @export
 
 prepare_tiles.bbox <- function(aoi,
                                res = c(x = 1, y = 1),
                                tilesize = c(10, 10),
                                crs, ...) {
 
+  if (missing(crs)) {
+    stop("Error: CRS must be provided for bbox input.")
+  }
+
+  # Convert bbox to sfc with CRS
   st_as_sfc(aoi) %>%
     st_geometry() %>%
     st_sfc(crs = crs) %>%
@@ -113,6 +144,14 @@ prepare_tiles.numeric <- function(aoi,
                                   tilesize = c(10, 10),
                                   crs, ...) {
 
+  if (length(aoi) != 4 || !all(c("xmin", "ymin", "xmax", "ymax") %in% names(aoi))) {
+    stop("Error: AOI must be a numeric vector of length 4 with named elements 'xmin', 'ymin', 'xmax', 'ymax'.")
+  }
+  if (missing(crs)) {
+    stop("Error: CRS must be provided for numeric AOI input.")
+  }
+
+  # Convert numeric AOI to bbox and then to sfc
   aoi %>%
     st_bbox() %>%
     st_as_sfc() %>%

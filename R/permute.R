@@ -42,6 +42,27 @@
 
 permute <- function(x) {
 
-  x[sample.int(length(x))]
+  # Check if input is a valid vector
+  if (!is.vector(x)) {
+    stop("Error: Input 'x' must be a vector.")
+  }
 
+  # If the vector has no elements, return the empty vector
+  if (length(x) == 0) {
+    warning("Input vector is empty. Returning the same empty vector.")
+    return(x)
+  }
+
+  # If the vector has only one element, return it as is
+  if (length(x) == 1) {
+    warning("Input vector has only one element. Returning the same vector.")
+    return(x)
+  }
+
+  # Permute the vector using sample.int
+  tryCatch({
+    return(x[sample.int(length(x))])
+  }, error = function(e) {
+    stop("Error in permuting the vector: ", e$message)
+  })
 }

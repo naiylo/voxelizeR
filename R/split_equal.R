@@ -29,15 +29,27 @@
 #' @export
 
 split_equal <- function(x, n) {
-  if (n == 1) {
-    list(x)
-  } else if (length(x) == 0) {
-    rep(list(integer(0)), n)
-  } else {
-    groups <- cut(seq_along(x), n, labels = FALSE)
-    # Ensure that the groups are as evenly distributed as possible
-    split(x, groups)
+  # Input validation
+  if (!is.vector(x)) {
+    stop("Error: 'x' must be a vector.")
   }
+
+  if (!is.numeric(n) || n <= 0 || n %% 1 != 0) {
+    stop("Error: 'n' must be a positive integer.")
+  }
+
+  if (n == 1) {
+    return(list(x))
+  }
+
+  if (length(x) == 0) {
+    return(rep(list(integer(0)), n))
+  }
+
+  groups <- cut(seq_along(x), n, labels = FALSE)
+
+  # Ensure that the groups are as evenly distributed as possible
+  split(x, groups)
 }
 
 #' Split vector into equal parts
@@ -68,8 +80,20 @@ split_equal <- function(x, n) {
 #' @export
 
 split_equal2 <- function(x, l) {
+  # Input validation
+  if (!is.vector(x)) {
+    stop("Error: 'x' must be a vector.")
+  }
 
+  if (!is.numeric(l) || l <= 0 || l %% 1 != 0) {
+    stop("Error: 'l' must be a positive integer.")
+  }
+
+  if (length(x) == 0) {
+    return(list())
+  }
+
+  # Split the vector into groups of length 'l'
   split(x, ceiling(seq_along(x) / l))
-
 }
 

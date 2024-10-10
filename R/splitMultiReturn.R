@@ -66,20 +66,35 @@ setMethod("splitMultiReturn",
           signature = c("Rays"),
           definition = function(rays) {
 
-            if(!'pulseID' %in% names(rays))
-              rays <- addPulseID(rays)
+            # Validate input
+            if (!inherits(rays, "Rays")) {
+              stop("Error: Input must be of class 'Rays'.")
+            }
 
-            # origin are the virtual origin points of pulses
+            if (!"data" %in% slotNames(rays)) {
+              stop("Error: The input object does not contain the required 'data' slot.")
+            }
+
+            if (!all(c('Xtraj', 'Ytraj', 'Ztraj', 'NumberOfReturns', 'ReturnNumber', 'gpstime') %in% names(rays@data))) {
+              stop("Error: The 'data' slot must contain the necessary columns: 'Xtraj', 'Ytraj', 'Ztraj', 'NumberOfReturns', 'ReturnNumber', 'gpstime'.")
+            }
+
+            # Check if pulseID exists; if not, add it
+            if (!'pulseID' %in% names(rays@data)) {
+              rays <- addPulseID(rays)
+            }
+
+            # Extract the point cloud data
             pc <- rays@data %>%
               dplyr::mutate(Xorigin = .data$Xtraj,
                             Yorigin = .data$Ytraj,
                             Zorigin = .data$Ztraj)
 
-            # single returns: nothing to change
+            # Handle single returns (no changes needed)
             single_return <- pc %>%
               dplyr::filter(.data$NumberOfReturns == 1)
 
-            # multi-return: change all returns with ReturnNumber > 1
+            # Handle multi-return cases
             multi_return <- pc %>%
               dplyr::filter(.data$NumberOfReturns > 1) %>%
               dplyr::group_by(.data$pulseID) %>%
@@ -88,10 +103,10 @@ setMethod("splitMultiReturn",
                             Zorigin = c(.data$Zorigin[1], utils::head(.data$Z, -1))) %>%
               dplyr::ungroup()
 
+            # Combine single and multi-return points and sort them by time and return number
             rays@data <- rbind(single_return, multi_return) %>%
               dplyr::arrange(.data$gpstime, .data$ReturnNumber) %>%
               stats::setNames(names(rays@data))
 
             rays
-
-})
+          })
