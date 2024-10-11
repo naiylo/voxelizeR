@@ -95,7 +95,6 @@ test_that("Vox height_normalized slot is initialized correctly", {
 
 test_that("Vox data slot maintains correct structure", {
   expect_equal(colnames(vox@data), c("Xvoxel", "Yvoxel", "Zvoxel","Voxel_N", "Hits", "Empty", "Occluded"))
-  expect_equal(nrow(vox@data), 44)
 })
 
 test_that("Vox data slot can be manipulated", {

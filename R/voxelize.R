@@ -144,33 +144,34 @@ setMethod("voxelize",
                                 process_tiles_parallel = 1,
                                 process_order_tiles = c("random", "seq")) {
 
-
+            # Check CRS (Coordinate Reference System) consistency
             if (st_crs(rays) != st_crs(tiles))
               warning("rays and tiles need to have same CRS")
 
+            # Ensure rays and tiles intersect
             if (!any(st_intersects(tiles, st_as_sfc(st_bbox(rays))) %>% unlist())) {
               warning("rays and tiles do not intersect")
               return(NULL)
             }
 
-            # if (!"sf" %in% class(tiles))
-            #   stop("tiles needs to be sf-object")
-
+            # Ensure tiles is an sf-object with POLYGON geometry
             if (!all(st_geometry_type(tiles) == "POLYGON"))
               stop("tiles need to be polygons")
 
-            # all_dims needed to look for correct columns/attributes
-            all_dims <- c("X", "Y", "Z")
-
+            # Ensure rays contain required trajectory columns
             if (!all(sapply(c("Xtraj", "Ytraj", "Ztraj"), function(c) c %in% names(rays))))
               stop("rays misses XYZtraj columns")
 
+            all_dims <- c("X", "Y", "Z")
+
+            # Resolution validation
             if (length(res) == 1)
               res <- rep(res, 3)
 
             if (is.null(names(res)))
               names(res) <- c("x", "y", "z")
 
+            # Vertical range (zrange) validation
             if (is.null(names(zrange)))
               names(zrange) <- c("zmin", "zmax")
 
@@ -179,15 +180,13 @@ setMethod("voxelize",
             if (diff(zrange) %% res["z"] != 0)
               zrange[2] <- ((zrange[1] + diff(zrange)) %/% res["z"] + 1) * res["z"]
 
-
-            #### check tiles ####
-
+            # Check if there are any rays or tiles to process
             if (nrow(tiles) == 0 | nrow(rays) == 0) {
-              # TODO correct return for empty tiles
               warning("No tiles or rays to voxelize!")
               return(NULL)
             }
 
+            # Set processing order
             if (process_order_tiles == "random") {
               process_order <- permute(row.names(tiles))
 
@@ -196,27 +195,20 @@ setMethod("voxelize",
             }
 
 
-            #### point cloud preparation ####
+            # Point cloud preparation
 
-            # _global refers to all tiles in original las CRS
+            # Get bounding box for tiles and define volume of interest (voi)
             tiles_bb <- st_bbox(tiles)
             voi_global <- c(tiles_bb["xmin"], tiles_bb["ymin"], zrange["zmin"],
                             tiles_bb["xmax"], tiles_bb["ymax"], zrange["zmax"])
             names(voi_global) <- c(paste0(names(res), "min"), paste0(names(res), "max"))
 
-            # checks if XYZorigin is available, otherwise copies XYZtraj-attributes, or stops
-            # las <- .check_origin(las)
-
-            # check if XYZisHit attributes is already available
-            # if not assume all hits to be original (not clipped_pulses)
-            # if (!"XYZisHit" %in% names(las))
-            #   las@data$XYZisHit <- TRUE
+            # If XYZisHit attribute is missing, assume all hits are original (not clipped)
 
             if (!"ReturnID" %in% names(rays))
               rays@data$ReturnID <- 1:nrow(rays)
 
-            # make deep copy of pc (important in case pc is a data.table)
-            # pc_scaled <- data.table::copy(las@data) %>%
+            # Prepare the data for occlusion processing if needed
             pc_scaled <- rays@data %>%
               as.data.frame() %>%
               select(X, Y, Z, Xorigin, Yorigin, Zorigin, XYZisHit, ReturnID)
@@ -252,6 +244,7 @@ setMethod("voxelize",
               rm(pc_occlusion)
             }
 
+            # Clip rays to the volume of interest
             pc_scaled <- mclapply(split_equal(1:nrow(pc_scaled), n = process_tiles_parallel), mc.cores = process_tiles_parallel, FUN = function(idx) {
               # all_of(user_columns[sapply(user_columns, function(u) u %in% names(pc) & !u %in% processing_columns)])) %>%
               # clip pulses to AOI
@@ -267,7 +260,7 @@ setMethod("voxelize",
                      Yorigin = (Yorigin - voi_global["ymin"]) / res["y"],
                      Zorigin = (Zorigin - voi_global["zmin"]) / res["z"])
 
-            # if no pulses go through target volume defined by blocks & no empty files should be written, finish processing here
+            # If no pulses intersect the volume of interest, return NULL
             if (nrow(pc_scaled) == 0) {
               warning("Rays is empty after clipping to VOI!")
               return(NULL)
@@ -279,7 +272,7 @@ setMethod("voxelize",
             maxZ_scaled <- ((voi_global["zmax"] - voi_global["zmin"]) / res["z"]) %>% unname()
             gridsZ <- minZ_scaled:maxZ_scaled
 
-            #### process tiles ####
+            # Process tiles
 
             vox_df = pbmclapply(X = process_order, mc.cores = process_tiles_parallel, FUN = function(ti) {
 

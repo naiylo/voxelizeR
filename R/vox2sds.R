@@ -116,6 +116,12 @@ setMethod("vox2sds",
           signature = "Vox",
           definition = function(vox) {
 
+            # Validate input
+            if (!inherits(vox, "Vox")) {
+              stop("Error: Input must be of class 'Vox'.")
+            }
+
+            # Rescale X and Y coordinates to global coordinates
             vox_df <- vox@data %>%
               # XYZvoxel refers to voxel center
               # only rescale X and Y to global coordinates for raster creation
@@ -124,11 +130,7 @@ setMethod("vox2sds",
 
             features <- setdiff(names(vox_df), paste0(c("X", "Y", "Z"), "voxel"))
 
-            # unscaled z coordinates
-            # zs <- seq(vox@extent["zmin"] + 0.5 * vox@resolution["z"], vox@extent["zmax"] - 0.5 * vox@resolution["z"], vox@resolution["z"])
-
-            # add corners pixels to each raster layer to guarantee same extent
-            # pixels 5 and 6 are the first from the corner to get the resolution right
+            # Create corner pixels to ensure the correct raster extent and resolution
             corners_pixels <- data.frame(Xvoxel = c(vox@extent["xmin"] + 0.5 * vox@resolution["x"],
                                                     vox@extent["xmin"] + 0.5 * vox@resolution["x"],
                                                     vox@extent["xmax"] - 0.5 * vox@resolution["x"],
@@ -142,20 +144,20 @@ setMethod("vox2sds",
                                                     vox@extent["ymin"] + 0.5 * vox@resolution["y"],
                                                     vox@extent["ymin"] + 1.5 * vox@resolution["y"]))
 
+            # Validate z-range
             minZ_scaled <- min(vox@data$Zvoxel)
             maxZ_scaled <- max(vox@data$Zvoxel)
             zs <- minZ_scaled:(maxZ_scaled - 1)
             zs_unscaled <- (zs + 0.5) * vox@resolution["z"] + vox@extent[3]
 
-            # for each feature create a multi-layer SpatRaster (z dimension is height)
+            # For each feature, create a multi-layer SpatRaster where z-dimension represents height
             rast_list <- lapply(features, function(feat) {
               zstack <- lapply(minZ_scaled:(maxZ_scaled - 1), function(z) {
 
                 vox_df_layer <- vox_df %>%
                   filter(Zvoxel == z)
 
-                # problem with empty layers: rast() will not produce desired resolution and extent
-                # so create explicitly
+                # Handle cases with empty layers to ensure correct raster dimensions
                 if (nrow(vox_df_layer) == 0) {
 
                   rast(matrix(NA_real_,
@@ -167,7 +169,7 @@ setMethod("vox2sds",
                                       ymax = vox@extent["ymax"])))
 
                 } else {
-
+                  # Merge with corner pixels to ensure raster creation
                   vox_df_layer %>%
                     full_join(corners_pixels, by = c("Xvoxel", "Yvoxel")) %>%
                     rename(x = Xvoxel,
@@ -185,13 +187,14 @@ setMethod("vox2sds",
                 rast()
 
               names(zstack) <- zs_unscaled
-              # ToDo: CRS assignment
-              # crs(zstack) <- vox@crs
               zstack
             })
+
+            # Combine all features into a SpatRasterDataset (sds)
             rast_sds <- sds(rast_list)
             names(rast_sds) <- features
 
+            # Assign units based on the voxel mode
             if (vox@mode == "LAD") {
               terra::units(rast_sds) <- c("count", "count", rep("m", 5), "m2", rep("m-1", 7))
             } else {
