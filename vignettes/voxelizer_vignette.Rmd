@@ -322,12 +322,15 @@ skip_files <- c("clip_rays-Rays-numeric-numeric-numeric-method.Rd",
                 "clip_rays-Rays-sf-numeric-numeric-method.Rd",
                 "show-Rays-method.Rd",
                 "show-Vox-method.Rd",
+                "head.Vox.Rd",
                 "initialize-Rays-method.Rd",
                 "initialize-Vox-method.Rd",
                 "Check-open-paren-Rays-close-paren.Rd",
                 "Check-open-paren-Vox-close-paren.Rd",
                 "pipe.Rd",
-                "voxelize-Rays-sf-method.Rd")  
+                "voxelize-Rays-sf-method.Rd",
+                "Rays-class.Rd",
+                "Vox-class.Rd")  
 
 # List of patterns to skip
 skip_patterns <- c("^%", "^\\\\S4method\\{", 
