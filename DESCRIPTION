@@ -1,5 +1,5 @@
 Package: voxelizer
-Title: What the Package Does (One Line, Title Case)
+Title: The voxelizeR package offers advanced functionalities for voxelizing LiDAR point cloud data.
 Version: 0.0.0.9000
 Authors@R: 
     person("Benjamin", "Brede", , "benjamin.brede@gfz-potsdam.de", role = c("aut", "cre"),
