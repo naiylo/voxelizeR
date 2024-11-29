@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+# SPDX-FileCopyrightText: 2024 Benjamin Brede
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 #' Prepare tiles that define the voxelization region
 #'
 #' @importFrom sf st_bbox st_sfc st_make_grid st_sf st_as_sfc st_geometry st_crs st_polygon st_set_crs st_linestring

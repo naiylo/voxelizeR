@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+# SPDX-FileCopyrightText: 2024 Benjamin Brede
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Read in our example data
 data_file <- system.file("extdata","H7_LS_F2_H20_200901-120129.laz", package = "voxelizer")
 data <- readLAS(data_file)

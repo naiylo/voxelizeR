@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+# SPDX-FileCopyrightText: 2024 Benjamin Brede
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 test_that("Initial permutation changes", {
   # Create an example vector
   x <- 1:10

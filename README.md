@@ -1,6 +1,15 @@
-# voxelizeR
+# voxelizer
 
-[![GitHub](https://img.shields.io/github/license/naiylo/voxelizeR)](https://github.com/naiylo/voxelizeR/blob/main/LICENSE)
+The voxelizer package offers advanced functionalities for voxelizing LiDAR point cloud data.
+
+## License
+
+This package is licensed under the GPL-3.0-or-later License.
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
+Copyright 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+Copyright 2024 Benjamin Brede
 
 ### Overview
 

@@ -1,0 +1,6 @@
+This repository is licensed under the GPL-3.0-or-later License.
+
+Copyright 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+Copyright 2024 Benjamin Brede
+
+All files and data in this repository are provided under the GPL-3.0-or-later license.

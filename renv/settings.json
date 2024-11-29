@@ -1,4 +1,12 @@
 {
+  "license": "GPL-3.0-or-later",
+  "copyright": [
+    "2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences",
+    "2024 Benjamin Brede"
+  ]
+}
+
+{
   "bioconductor.version": null,
   "external.libraries": [],
   "ignored.packages": [],

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+# SPDX-FileCopyrightText: 2024 Benjamin Brede
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 test_that("split_equal returns the original vector when n is 1", {
   x <- 1:10
   n <- 1

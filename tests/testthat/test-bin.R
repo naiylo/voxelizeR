@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+# SPDX-FileCopyrightText: 2024 Benjamin Brede
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 test_that("binning works correctly", {
   # Test cases for default origin = 0
   expect_equal(bin(0.1, 1), 0)

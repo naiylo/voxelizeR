@@ -1,10 +1,15 @@
 Package: voxelizer
 Title: The voxelizeR package offers advanced functionalities for voxelizing LiDAR point cloud data
-Version: 0.0.0.9000
-Authors@R: 
-    person("Benjamin", "Brede", , "benjamin.brede@gfz-potsdam.de", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-9253-4517"))
-Description: What the package does (one paragraph).
+Version: 1.0.0
+Authors@R: c(
+    person(given = "Helmholtz Centre Potsdam - GFZ",
+           family = "German Research Centre for Geosciences",
+           role = c("aut")),
+    person(given = "Benjamin", 
+           family = "Brede", 
+           email = "benjamin.brede@example.com", 
+           role = c("aut", "cre")))
+Description: The voxelizeR package offers advanced functionalities for voxelizing LiDAR point cloud data.
 License: GPL-3.0-or-later
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Helmholtz Centre Potsdam - GFZ German Research Centre for Geosciences
+# SPDX-FileCopyrightText: 2024 Benjamin Brede
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 utils::globalVariables(c(
   "CodeOrigin", "OriginOutside", "CodeHit", "CodeOut", "X", "Xorigin",
   "D", "Yorigin", "Y", "Zorigin", "Z", "Xclip", "Yclip", "Zclip",
