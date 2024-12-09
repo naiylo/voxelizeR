@@ -6,7 +6,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 ---
 title: "The voxelizeR Package"
-author: "Benjamin Brede and Oskar Schiedewitz"
+author: "Benjamin Brede, Francois Pimon, Gregoire Vincent and Oskar Schiedewitz"
 output: 
   bookdown::html_document2:
     number_sections: true

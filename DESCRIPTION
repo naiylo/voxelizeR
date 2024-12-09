@@ -7,7 +7,19 @@ Authors@R: c(
            role = c("aut")),
     person(given = "Benjamin", 
            family = "Brede", 
-           email = "benjamin.brede@example.com", 
+           email = "benjamin.brede@gfz-potsdam.de", 
+           role = c("aut", "cre")),
+    person(given = "Francois", 
+           family = "Pimont", 
+           email = "francois.pimont@inrae.fr", 
+           role = c("aut", "cre")),
+    person(given = "Gregoire", 
+           family = "Vincent", 
+           email = "gregoire.vincent@ird.fr", 
+           role = c("aut", "cre")),
+    person(given = "Oskar", 
+           family = "Schiedewitz", 
+           email = "oskarschiedewitz@gmail.com", 
            role = c("aut", "cre")))
 Description: The voxelizeR package offers advanced functionalities for voxelizing LiDAR point cloud data.
 License: GPL-3.0-or-later
